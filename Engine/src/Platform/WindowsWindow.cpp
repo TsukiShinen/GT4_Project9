@@ -49,7 +49,7 @@ namespace Engine
 		windowClass.hIcon = LoadIcon(m_Instance, IDI_APPLICATION);
 		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		windowClass.hbrBackground = nullptr;
-		windowClass.lpszClassName = L"owl_window_class";
+		windowClass.lpszClassName = L"window_class";
 
 		if (!RegisterClass(&windowClass))
 		{
@@ -66,14 +66,14 @@ namespace Engine
 
 		m_Window = CreateWindowEx(
 			WS_EX_OVERLAPPEDWINDOW,
-			L"owl_window_class",
+			L"window_class",
 			std::wstring(m_Data.Title.begin(), m_Data.Title.end()).c_str(),
 			windowStyle,
 			windowX, windowY,
 			clientRect.right - clientRect.left,
 			clientRect.bottom - clientRect.top,
 			nullptr, nullptr, m_Instance, nullptr);
-		CORE_ASSERT(m_Window, GetLastError())
+		assert(m_Window, GetLastError());
 		SetWindowLongPtr(m_Window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
 		ShowWindow(m_Window, SW_SHOW);
@@ -92,14 +92,14 @@ namespace Engine
 		}
 	}
 
-	void Window::ConsoleWrite(const char* pMessage, const uint8_t pColour)
+	void WindowsWindow::ConsoleWrite(const char* pMessage, const uint8_t pColour)
 	{
 		const HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		auto t = Application::Get();
 		if (Application::Get() && Application::Get()->GetWindow()) {
-			csbi = static_cast<WindowsWindow*>(Application::Get()->GetWindow())->m_StdOutputCsbi;
+			csbi = Application::Get()->GetWindow()->m_StdOutputCsbi;
 		} else {
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 		}
@@ -115,13 +115,13 @@ namespace Engine
 		SetConsoleTextAttribute(consoleHandle, csbi.wAttributes);
 	}
 
-	void Window::ConsoleWriteError(const char* pMessage, const uint8_t pColour)
+	void WindowsWindow::ConsoleWriteError(const char* pMessage, const uint8_t pColour)
 	{
 		const HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		if (Application::Get() && Application::Get()->GetWindow()) {
-			csbi = static_cast<WindowsWindow*>(Application::Get()->GetWindow())->m_ErrOutputCsbi;
+			csbi = Application::Get()->GetWindow()->m_ErrOutputCsbi;
 		} else {
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE), &csbi);
 		}
@@ -135,13 +135,6 @@ namespace Engine
 		WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), pMessage, static_cast<DWORD>(length), &numberWritten, 0);
 
 		SetConsoleTextAttribute(consoleHandle, csbi.wAttributes);
-	}
-	
-	const char* Window::GetExecutablePath()
-	{
-		char buffer[MAX_PATH];
-		GetModuleFileNameA(nullptr, buffer, MAX_PATH);
-		return buffer;
 	}
 
 	LRESULT WindowsWindow::ProcessMessages(const uint32_t pMessage, WPARAM pWParam, LPARAM pLParam)

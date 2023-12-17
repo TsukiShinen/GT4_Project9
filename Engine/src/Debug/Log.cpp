@@ -1,7 +1,8 @@
 #include "Log.h"
-#include "Platform/Window.h"
 
 #include <ctime>
+
+#include "Platform/WindowsWindow.h"
 
 namespace Engine
 {
@@ -20,17 +21,17 @@ namespace Engine
 		auto message = FormatMessageV(pMessage, args);
 		va_end(args);
 
-		message = FormatMessage("[%s] [%s] %s: %s\n", timestamp, levelStrings[pLevel], pSender, message);
+		message = LogFormatMessage("[%s] [%s] %s: %s\n", timestamp, levelStrings[pLevel], pSender, message);
 
 		if (isError)
-			Window::ConsoleWriteError(message, pLevel);
+			WindowsWindow::ConsoleWriteError(message, pLevel);
 		else
-			Window::ConsoleWrite(message, pLevel);
+			WindowsWindow::ConsoleWrite(message, pLevel);
 
 		delete[] message;
 	}
 
-	char* Log::FormatMessage(const char* pFormat, ...)
+	char* Log::LogFormatMessage(const char* pFormat, ...)
 	{
 		va_list args;
 		va_start(args, pFormat);

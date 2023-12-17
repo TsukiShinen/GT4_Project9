@@ -30,7 +30,7 @@ namespace Engine
 		static void Print(LogLevel pLevel, const char* pSender, const char* pMessage, ...);
 
 	private:
-		static char* FormatMessage(const char* pFormat, ...);
+		static char* LogFormatMessage(const char* pFormat, ...);
 		static char* FormatMessageV(const char* pFormat, va_list pVaList);
 	};
 }

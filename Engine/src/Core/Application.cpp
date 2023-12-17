@@ -2,23 +2,27 @@
 
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
+#include "Renderer/DirectXApi.h"
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
 
 Application::Application(const ApplicationSpecification& pSpecification)
 {
-    ASSERT(!s_Instance, "Application already exist!")
+    assert(!s_Instance, "Application already exist!");
     s_Instance = this;
 	m_Window = nullptr;
 
     // === Window ===
-    m_Window = Engine::Window::Create(Engine::WindowProps(pSpecification.Name, 1280, 700));
+    m_Window = new Engine::WindowsWindow(Engine::WindowProps(pSpecification.Name, 1280, 700));
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
+	Engine::DirectXApi::Initialize();
 }
 
 Application::~Application()
 {
+	Engine::DirectXApi::Shutdown();
 	delete m_Window;
 }
 
@@ -28,7 +32,8 @@ void Application::Run()
 	{
 		if (!m_IsMinimized)
 		{
-			
+			Engine::DirectXApi::BeginFrame();
+			Engine::DirectXApi::EndFrame();
 		}
 
 		m_Window->Update();

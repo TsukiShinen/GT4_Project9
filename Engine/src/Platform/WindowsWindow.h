@@ -1,29 +1,43 @@
 ﻿#pragma once
 
 #include <cstdint>
+#include <functional>
+#include <string>
 #include <windows.h>
 
-#include "Window.h"
+#include "Events/Event.h"
 
 namespace Engine
 {
-	class WindowsWindow : public Window
+	struct WindowProps
+	{
+		std::string Title = "Application";
+		uint32_t Width = 1600;
+		uint32_t Height = 900;
+	};
+	
+	class WindowsWindow
 	{
 	public:
+		using EventCallbackFn = std::function<void(Event&)>;
+		
 		WindowsWindow(const WindowProps& pWindowProps);
-		~WindowsWindow() override;
+		~WindowsWindow();
 
 		void Initialize(const WindowProps& pWindowProps);
-		void Update() override;
+		void Update();
 
-		[[nodiscard]] uint32_t GetWidth() const override { return m_Data.Width; }
-		[[nodiscard]] uint32_t GetHeight() const override { return m_Data.Height; }
+		[[nodiscard]] uint32_t GetWidth() const { return m_Data.Width; }
+		[[nodiscard]] uint32_t GetHeight() const { return m_Data.Height; }
 
-		void SetEventCallback(const EventCallbackFn& pCallback) override { m_Data.EventCallback = pCallback; }
+		void SetEventCallback(const EventCallbackFn& pCallback) { m_Data.EventCallback = pCallback; }
 
-		void Sleep(const unsigned long pMilliseconds) override { ::Sleep(pMilliseconds); }
+		void Sleep(const unsigned long pMilliseconds) { ::Sleep(pMilliseconds); }
 
-		const char* GetVulkanRequiredExtension() override { return "VK_KHR_win32_surface"; }
+		HWND GetWindow() const { return m_Window; }
+
+		static void ConsoleWrite(const char* pMessage, uint8_t pColour);
+		static void ConsoleWriteError(const char* pMessage, uint8_t pColour);
 
 	private:
 		LRESULT ProcessMessages(uint32_t pMessage, WPARAM pWParam, LPARAM pLParam);

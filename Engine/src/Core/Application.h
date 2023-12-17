@@ -1,9 +1,9 @@
 ﻿#pragma once
+#include <assert.h>
 #include <string>
 
-#include "Debug/Assert.h"
 #include "Events/ApplicationEvent.h"
-#include "Platform/Window.h"
+#include "Platform/WindowsWindow.h"
 
 struct ApplicationCommandLineArgs
 {
@@ -12,7 +12,7 @@ struct ApplicationCommandLineArgs
 
     const char* operator[](const int pIndex) const
     {
-        CORE_ASSERT(pIndex < Count);
+        assert(pIndex < Count);
         return Args[pIndex];
     }
 };
@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
-    Engine::Window* GetWindow() const { return m_Window; }
+    Engine::WindowsWindow* GetWindow() const { return m_Window; }
     void SetMinimized(const bool pValue) { m_IsMinimized = pValue; }
 
     static Application* Get() { return s_Instance; }
@@ -50,7 +50,7 @@ private:
     bool m_IsMinimized = false;
     float m_LastFrameTime = 0.0f;
 
-    Engine::Window* m_Window;
+    Engine::WindowsWindow* m_Window;
 
     static Application* s_Instance;
     
