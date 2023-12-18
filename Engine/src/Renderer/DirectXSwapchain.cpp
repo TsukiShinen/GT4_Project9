@@ -7,8 +7,6 @@ namespace Engine
 {
     DirectXSwapchain::DirectXSwapchain(const uint32_t pWidth, const uint32_t pHeight)
     {
-    	InitializeMsaa();
-    	
         m_Swapchain.Reset();
 
         DXGI_SWAP_CHAIN_DESC sd;
@@ -19,8 +17,8 @@ namespace Engine
         sd.BufferDesc.Format = k_BackBufferFormat;
         sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
         sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-        sd.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-        sd.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+        sd.SampleDesc.Count = DirectXContext::Get()->m_4xMsaaState ? 4 : 1;
+        sd.SampleDesc.Quality = DirectXContext::Get()->m_4xMsaaState ? (DirectXContext::Get()->m_4xMsaaQuality - 1) : 0;
         sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         sd.BufferCount = k_SwapChainBufferCount;
         sd.OutputWindow = Application::Get()->GetWindow()->GetWindow();
@@ -102,8 +100,8 @@ namespace Engine
 		// we need to create the depth buffer resource with a typeless format.  
 		depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 
-	    depthStencilDesc.SampleDesc.Count = m_4xMsaaState ? 4 : 1;
-	    depthStencilDesc.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;
+	    depthStencilDesc.SampleDesc.Count = DirectXContext::Get()->m_4xMsaaState ? 4 : 1;
+	    depthStencilDesc.SampleDesc.Quality = DirectXContext::Get()->m_4xMsaaState ? (DirectXContext::Get()->m_4xMsaaQuality - 1) : 0;
 	    depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	    depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
@@ -161,25 +159,5 @@ namespace Engine
     	// done for simplicity.  Later we will show how to organize our rendering code
     	// so we do not have to wait per frame.
     	DirectXContext::Get()->m_CommandObjects->Flush();
-    }
-
-    void DirectXSwapchain::InitializeMsaa()
-    {
-    	// Check 4X MSAA quality support for our back buffer format.
-    	// All Direct3D 11 capable devices support 4X MSAA for all render 
-    	// target formats, so we only need to check quality support.
-
-    	D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msQualityLevels;
-    	msQualityLevels.Format = k_BackBufferFormat;
-    	msQualityLevels.SampleCount = 4;
-    	msQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
-    	msQualityLevels.NumQualityLevels = 0;
-    	ThrowIfFailed(DirectXContext::Get()->m_Device->CheckFeatureSupport(
-			D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
-			&msQualityLevels,
-			sizeof(msQualityLevels)));
-
-    	m_4xMsaaQuality = msQualityLevels.NumQualityLevels;
-    	assert(m_4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
     }
 }

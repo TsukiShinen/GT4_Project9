@@ -20,8 +20,6 @@ namespace Engine
         void Present();
 
     private:
-        void InitializeMsaa();
-        
         ID3D12Resource* CurrentBackBuffer()const;
         D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
         D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
@@ -34,9 +32,6 @@ namespace Engine
 
         D3D12_VIEWPORT m_ScreenViewport; 
         D3D12_RECT m_ScissorRect;
-        
-        bool m_4xMsaaState = false;
-        UINT m_4xMsaaQuality = 0;
 
         friend class DirectXApi;
     };
