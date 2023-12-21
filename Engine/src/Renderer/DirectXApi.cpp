@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "DirectXCommandObjects.h"
+#include "DirectXCommandObject.h"
 #include "DirectXSwapchain.h"
 
 namespace Engine
@@ -28,47 +28,34 @@ namespace Engine
 
     void DirectXApi::BeginFrame()
     {
-        // Reuse the memory associated with command recording.
-        // We can only reset when the associated command lists have finished execution on the GPU.
-        ThrowIfFailed(DirectXContext::Get()->m_CommandObjects->m_DirectCmdListAlloc->Reset());
+        ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetAllocator());
+        ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetList());
 
-        // A command list can be reset after it has been added to the command queue via ExecuteCommandList.
-        // Reusing the command list reuses memory.
-        ThrowIfFailed(DirectXContext::Get()->m_CommandObjects->m_CommandList->Reset(DirectXContext::Get()->m_CommandObjects->m_DirectCmdListAlloc.Get(), nullptr));
-
-        DirectXContext::Get()->m_CommandObjects->m_CommandList->RSSetViewports(1, &DirectXContext::Get()->m_Swapchain->m_ScreenViewport);
-        DirectXContext::Get()->m_CommandObjects->m_CommandList->RSSetScissorRects(1, &DirectXContext::Get()->m_Swapchain->m_ScissorRect);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->RSSetViewports(1, &DirectXContext::Get()->m_Swapchain->GetViewport());
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->RSSetScissorRects(1, &DirectXContext::Get()->m_Swapchain->GetScissorRect());
 
         // Indicate a state transition on the resource usage.
-        const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(DirectXContext::Get()->m_Swapchain->CurrentBackBuffer(),
+        const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(DirectXContext::Get()->m_Swapchain->GetCurrentBackBuffer(),
                                                                   D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-        DirectXContext::Get()->m_CommandObjects->m_CommandList->ResourceBarrier(1, &barrier);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->ResourceBarrier(1, &barrier);
 
         // Clear the back buffer and depth buffer.
-        DirectXContext::Get()->m_CommandObjects->m_CommandList->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->CurrentBackBufferView(), DirectX::Colors::Black, 0, nullptr);
-        DirectXContext::Get()->m_CommandObjects->m_CommandList->ClearDepthStencilView(DirectXContext::Get()->m_Swapchain->DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Black, 0, nullptr);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearDepthStencilView(DirectXContext::Get()->m_Swapchain->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
     }
 
     void DirectXApi::EndFrame()
     {
-        ThrowIfFailed(DirectXContext::Get()->m_CommandObjects->m_CommandList->Close());
- 
-        // Add the command list to the queue for execution.
-        ID3D12CommandList* cmdsLists[] = { DirectXContext::Get()->m_CommandObjects->m_CommandList.Get() };
-        DirectXContext::Get()->m_CommandObjects->m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
+        DirectXContext::Get()->m_CommandObject->Execute();
         DirectXContext::Get()->m_Swapchain->Present();
     }
 
     void DirectXApi::InitializeDebug()
     {
-#if defined(DEBUG) || defined(_DEBUG) 
-        // Enable the D3D12 debug layer.
-        {
-            Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
-            ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
-            debugController->EnableDebugLayer();
-        }
+#if defined(DEBUG) || defined(_DEBUG)
+        Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
+        ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
+        debugController->EnableDebugLayer();
 #endif
     }
 

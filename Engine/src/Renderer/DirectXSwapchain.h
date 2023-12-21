@@ -13,16 +13,20 @@ namespace Engine
         static const DXGI_FORMAT k_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
         
         DirectXSwapchain(uint32_t pWidth, uint32_t pHeight);
-        ~DirectXSwapchain();
+        ~DirectXSwapchain() = default;
 
         void Resize(uint32_t pWidth, uint32_t pHeight);
 
         void Present();
+        ID3D12Resource* GetCurrentBackBuffer()const;
+        [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferView() const;
+        [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilView() const;
+
+        [[nodiscard]] D3D12_VIEWPORT& GetViewport() { return m_ScreenViewport; }
+        [[nodiscard]] D3D12_RECT& GetScissorRect() { return m_ScissorRect; }
 
     private:
-        ID3D12Resource* CurrentBackBuffer()const;
-        D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView()const;
-        D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView()const;
+        void CreateRtvAndDsvDescriptorHeaps();
         
         Microsoft::WRL::ComPtr<IDXGISwapChain> m_Swapchain;
         
@@ -33,7 +37,10 @@ namespace Engine
         D3D12_VIEWPORT m_ScreenViewport; 
         D3D12_RECT m_ScissorRect;
 
-        friend class DirectXApi;
+        UINT m_RenderTargetDescriptorSize = 0;
+        Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_RenderTargetDescriptor;
+        UINT m_DepthStencilDescriptorSize = 0;
+        Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_DepthStencilDescriptor;
     };
     
 }
