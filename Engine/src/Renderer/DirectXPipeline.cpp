@@ -1,6 +1,9 @@
 ﻿#include "DirectXPipeline.h"
 
+#include <comdef.h>
+
 #include "DirectXSwapchain.h"
+#include "Debug/Log.h"
 
 namespace Engine
 {
@@ -21,27 +24,26 @@ namespace Engine
 
     void DirectXPipeline::InitializeSignature()
     {
-        // Root parameter can be a table, root descriptor or root constants.
-        CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+        CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
-        // Create a single descriptor table of CBVs.
-        CD3DX12_DESCRIPTOR_RANGE cbvTable;
-        cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-        slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+        CD3DX12_DESCRIPTOR_RANGE cbvTable0;
+        cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+        slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
+        CD3DX12_DESCRIPTOR_RANGE cbvTable1;
+        cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+        slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
 
-        // A root signature is an array of root parameters.
-        CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
-                                                D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+        const CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+                                                      D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-        // create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
         Microsoft::WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
         Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-        HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
-                                                 serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+        const HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+                                                       serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
 
         if (errorBlob != nullptr)
         {
-            ::OutputDebugStringA(static_cast<char*>(errorBlob->GetBufferPointer()));
+            CORE_ERROR(static_cast<char*>(errorBlob->GetBufferPointer()));
         }
         ThrowIfFailed(hr);
 
@@ -80,7 +82,6 @@ namespace Engine
                                          ? (DirectXContext::Get()->m_4xMsaaQuality - 1)
                                          : 0;
         psoDesc.DSVFormat = DirectXSwapchain::k_DepthStencilFormat;
-        ThrowIfFailed(
-            DirectXContext::Get()->m_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
+        ThrowIfFailed(DirectXContext::Get()->m_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
     }
 }

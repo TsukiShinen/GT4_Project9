@@ -4,6 +4,7 @@
 
 #include "Events/ApplicationEvent.h"
 #include "Platform/WindowsWindow.h"
+#include "Renderer/Model.h"
 
 struct ApplicationCommandLineArgs
 {
@@ -51,6 +52,8 @@ private:
     float m_LastFrameTime = 0.0f;
 
     Engine::WindowsWindow* m_Window;
+
+    std::unique_ptr<Engine::Model> m_Quad; 
 
     static Application* s_Instance;
     

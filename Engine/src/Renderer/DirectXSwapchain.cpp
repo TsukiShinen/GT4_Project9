@@ -57,7 +57,7 @@ namespace Engine
     	// Flush before changing any resources.
 		DirectXContext::Get()->m_CommandObject->Flush();
 
-	    ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetList());
+	    ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator()));
 
 		// Release the previous resources we will be recreating.
 		for (int i = 0; i < k_SwapChainBufferCount; ++i)

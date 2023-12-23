@@ -2,6 +2,7 @@
 #include "d3dUtil.h"
 #include <comdef.h>
 #include <fstream>
+#include <Debug/Log.h>
 
 using Microsoft::WRL::ComPtr;
 
@@ -57,7 +58,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> d3dUtil::CreateDefaultBuffer(
 
     // In order to copy CPU memory data into our default buffer, we need to create
     // an intermediate upload heap. 
-	auto propertiesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+	auto propertiesUpload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
     ThrowIfFailed(device->CreateCommittedResource(
         &propertiesUpload,
 		D3D12_HEAP_FLAG_NONE,
@@ -111,7 +112,7 @@ ComPtr<ID3DBlob> d3dUtil::CompileShader(
 		entrypoint.c_str(), target.c_str(), compileFlags, 0, &byteCode, &errors);
 
 	if(errors != nullptr)
-		OutputDebugStringA((char*)errors->GetBufferPointer());
+		CORE_ERROR((char*)errors->GetBufferPointer());
 
 	ThrowIfFailed(hr);
 

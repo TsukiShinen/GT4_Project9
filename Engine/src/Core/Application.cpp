@@ -3,6 +3,7 @@
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
 #include "Renderer/DirectXApi.h"
+#include "Renderer/GeometryGenerator.h"
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
@@ -18,6 +19,14 @@ Application::Application(const ApplicationSpecification& pSpecification)
     m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Engine::DirectXApi::Initialize();
+	
+	std::vector vertices = {
+		Engine::Vertex{DirectX::XMFLOAT3{-.5f, .5f, 0}},
+		Engine::Vertex{DirectX::XMFLOAT3{.5f, .5f, 0}},
+		Engine::Vertex{DirectX::XMFLOAT3{-.5f, -.5f, 0}}
+	};
+	std::vector<uint16_t> indices = { 0, 1, 2 };
+	m_Quad = std::make_unique<Engine::Model>(vertices, indices);
 }
 
 Application::~Application()
@@ -33,6 +42,9 @@ void Application::Run()
 		if (!m_IsMinimized)
 		{
 			Engine::DirectXApi::BeginFrame();
+			
+			m_Quad->Draw();
+			
 			Engine::DirectXApi::EndFrame();
 		}
 

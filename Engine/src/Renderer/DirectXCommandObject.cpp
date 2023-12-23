@@ -46,13 +46,8 @@ namespace Engine
         }
     }
 
-    HRESULT DirectXCommandObject::ResetList() const
+    HRESULT DirectXCommandObject::ResetList(Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& pAllocator) const
     {
-        return m_CommandList->Reset(DirectXContext::Get()->m_CommandObject->m_CommandAllocator.Get(), nullptr);
-    }
-
-    HRESULT DirectXCommandObject::ResetAllocator() const
-    {
-        return m_CommandAllocator->Reset();
+        return m_CommandList->Reset(pAllocator.Get(), nullptr);
     }
 }
