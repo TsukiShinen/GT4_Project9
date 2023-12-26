@@ -4,14 +4,17 @@
 
 namespace Engine
 {
-    class Shader
+    class DirectXShader
     {
     public:
-        Shader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
-        ~Shader();
+        DirectXShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
+        ~DirectXShader();
 
         Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
         Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }
+
+        void Begin();
+
     private:
         void InitializeSignature();
         void InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout,

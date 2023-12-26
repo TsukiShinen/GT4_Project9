@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "DirectXCommandObject.h"
-#include "Shader.h"
+#include "DirectXShader.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 
@@ -75,8 +75,7 @@ namespace Engine
         DirectXContext::Get()->m_MainPassCB.NearZ = 1.0f;
         DirectXContext::Get()->m_MainPassCB.FarZ = 1000.0f;
 
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(DirectXContext::Get()->m_BasePipeline->GetState().Get());
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(DirectXContext::Get()->m_BasePipeline->GetSignature().Get());
+        DirectXContext::Get()->m_BaseShader->Begin();
 
         const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
         currPassCb->CopyData(0, DirectXContext::Get()->m_MainPassCB);

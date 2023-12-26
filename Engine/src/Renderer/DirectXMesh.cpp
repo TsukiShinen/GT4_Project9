@@ -1,13 +1,13 @@
-﻿#include "Mesh.h"
+﻿#include "DirectXMesh.h"
 
 #include "DirectXCommandObject.h"
 #include "DirectXContext.h"
-#include "Shader.h"
+#include "DirectXShader.h"
 #include "Debug/Log.h"
 
 namespace Engine
 {
-    Mesh::Mesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices)
+    DirectXMesh::DirectXMesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices)
         : m_IndexCount(pIndices.size())
     {
         // ===== Constant Buffer =====
@@ -46,11 +46,11 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->Execute();
     }
 
-    Mesh::~Mesh()
+    DirectXMesh::~DirectXMesh()
     {
     }
 
-    void Mesh::Draw()
+    void DirectXMesh::Draw()
     {
         if(m_NumFramesDirty > 0)
         {
@@ -63,9 +63,6 @@ namespace Engine
 
             m_NumFramesDirty--;
         }
-
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(DirectXContext::Get()->m_BasePipeline->GetState().Get());
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(DirectXContext::Get()->m_BasePipeline->GetSignature().Get());
 
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);

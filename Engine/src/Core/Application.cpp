@@ -25,7 +25,7 @@ Application::Application(const ApplicationSpecification& pSpecification)
 		Engine::Vertex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)}
 	};
 	std::vector<uint16_t> indices = { 0, 1, 2 };
-	m_Quad = std::make_unique<Engine::Mesh>(vertices, indices);
+	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices);
 }
 
 Application::~Application()

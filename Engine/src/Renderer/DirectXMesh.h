@@ -12,11 +12,11 @@ namespace Engine
         DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
     };
     
-    class Mesh
+    class DirectXMesh
     {
     public:
-        Mesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices);
-        ~Mesh();
+        DirectXMesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices);
+        ~DirectXMesh();
         void Draw();
 
     private:
