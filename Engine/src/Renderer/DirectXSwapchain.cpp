@@ -147,7 +147,7 @@ namespace Engine
     	// Wait until frame commands are complete.  This waiting is inefficient and is
     	// done for simplicity.  Later we will show how to organize our rendering code
     	// so we do not have to wait per frame.
-    	DirectXContext::Get()->m_CommandObject->Flush();
+    	DirectXContext::Get()->m_CommandObject->Flush(); // TODO : Refactor this pls x/
     }
 
 	void DirectXSwapchain::CreateRtvAndDsvDescriptorHeaps()
