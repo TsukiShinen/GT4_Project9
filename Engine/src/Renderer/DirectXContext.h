@@ -12,6 +12,7 @@ namespace Engine
     class DirectXCommandObject;
     class DirectXSwapchain;
     class DirectXShader;
+    class DirectXCamera;
 
     class DirectXContext
     {
@@ -45,10 +46,7 @@ namespace Engine
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_PassConstantHeap = nullptr;
 
         // Camera
-        PassConstants m_MainPassCB;
-        DirectX::XMFLOAT3 m_EyePosition = { 0.0f, 0.0f, 0.0f };
-        DirectX::XMFLOAT4X4 m_View = MathHelper::Identity4x4();
-        DirectX::XMFLOAT4X4 m_Proj = MathHelper::Identity4x4();
+        std::unique_ptr<DirectXCamera> m_Camera;
 
     private:
         static DirectXContext* s_Instance;

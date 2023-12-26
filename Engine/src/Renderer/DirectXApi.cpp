@@ -4,6 +4,7 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXShader.h"
+#include "DirectXCamera.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 
@@ -26,6 +27,7 @@ namespace Engine
     void DirectXApi::Resize(const int pWidth, const int pHeight)
     {
         DirectXContext::Get()->m_Swapchain->Resize(pWidth, pHeight);
+        DirectXContext::Get()->m_Camera->Resize(pWidth, pHeight);
     }
 
     void DirectXApi::BeginFrame()
@@ -52,6 +54,7 @@ namespace Engine
             &renderTargetDescriptor, true,
             &depthStencilDescriptor);
 
+        /*
         const DirectX::XMMATRIX view = XMLoadFloat4x4(&DirectXContext::Get()->m_View);
         const DirectX::XMMATRIX proj = XMLoadFloat4x4(&DirectXContext::Get()->m_Proj);
 
@@ -74,11 +77,13 @@ namespace Engine
         DirectXContext::Get()->m_MainPassCB.InvRenderTargetSize = DirectX::XMFLOAT2(1.0f / Application::Get()->GetWindow()->GetWidth(), 1.0f / Application::Get()->GetWindow()->GetHeight());
         DirectXContext::Get()->m_MainPassCB.NearZ = 1.0f;
         DirectXContext::Get()->m_MainPassCB.FarZ = 1000.0f;
+        */
+        DirectXContext::Get()->m_Camera->Update();
 
         DirectXContext::Get()->m_BaseShader->Begin();
 
         const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
-        currPassCb->CopyData(0, DirectXContext::Get()->m_MainPassCB);
+        currPassCb->CopyData(0, DirectXContext::Get()->m_Camera->m_MainPassCB);
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }
