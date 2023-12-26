@@ -1,7 +1,7 @@
 ﻿#include "DirectXContext.h"
 
 #include "DirectXCommandObject.h"
-#include "DirectXPipeline.h"
+#include "DirectXShader.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 
@@ -42,34 +42,12 @@ namespace Engine
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
             {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
         };
-        s_Instance->m_BasePipeline = std::make_unique<DirectXPipeline>(layout, L"Shaders\\color.hlsl");
+        s_Instance->m_BaseShader = std::make_unique<DirectXShader>(layout, L"Shaders\\color.hlsl");
 
         // ===== Frame Resources =====
-        D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-        cbvHeapDesc.NumDescriptors = gNumFrameResources;
-        cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-        cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-        cbvHeapDesc.NodeMask = 0;
-        ThrowIfFailed(DirectXContext::Get()->m_Device->CreateDescriptorHeap(&cbvHeapDesc,
-            IID_PPV_ARGS(&s_Instance->m_PassConstantHeap)));
-        
         for(int i = 0; i < gNumFrameResources; ++i)
         {
             s_Instance->m_FramesData.push_back(std::make_unique<DirectXFrameData>(s_Instance->m_Device.Get(), 1));
-            
-            auto passCB = s_Instance->m_FramesData[i]->PassCB->Resource();
-            D3D12_GPU_VIRTUAL_ADDRESS cbAddress = passCB->GetGPUVirtualAddress();
-
-            // Offset to the pass cbv in the descriptor heap.
-            int heapIndex = i;
-            auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(s_Instance->m_PassConstantHeap->GetCPUDescriptorHandleForHeapStart());
-            handle.Offset(heapIndex, s_Instance->m_CbvSrvUavDescriptorSize);
-
-            D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-            cbvDesc.BufferLocation = cbAddress;
-            cbvDesc.SizeInBytes = d3dUtil::CalcConstantBufferByteSize(sizeof(PassConstants));
-        
-            s_Instance->m_Device->CreateConstantBufferView(&cbvDesc, handle);
         }
     }
 

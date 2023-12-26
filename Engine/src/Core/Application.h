@@ -4,7 +4,7 @@
 
 #include "Events/ApplicationEvent.h"
 #include "Platform/WindowsWindow.h"
-#include "Renderer/Model.h"
+#include "Renderer/DirectXMesh.h"
 
 struct ApplicationCommandLineArgs
 {
@@ -53,7 +53,7 @@ private:
 
     Engine::WindowsWindow* m_Window;
 
-    std::unique_ptr<Engine::Model> m_Quad; 
+    std::unique_ptr<Engine::DirectXMesh> m_Quad; 
 
     static Application* s_Instance;
     
