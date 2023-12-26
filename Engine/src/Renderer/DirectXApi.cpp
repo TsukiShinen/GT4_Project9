@@ -4,6 +4,7 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXShader.h"
+#include "DirectXCamera.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 
@@ -26,6 +27,7 @@ namespace Engine
     void DirectXApi::Resize(const int pWidth, const int pHeight)
     {
         DirectXContext::Get()->m_Swapchain->Resize(pWidth, pHeight);
+        DirectXContext::Get()->m_Camera->Resize(pWidth, pHeight);
     }
 
     void DirectXApi::BeginFrame()
@@ -52,33 +54,12 @@ namespace Engine
             &renderTargetDescriptor, true,
             &depthStencilDescriptor);
 
-        const DirectX::XMMATRIX view = XMLoadFloat4x4(&DirectXContext::Get()->m_View);
-        const DirectX::XMMATRIX proj = XMLoadFloat4x4(&DirectXContext::Get()->m_Proj);
-
-        const DirectX::XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-        DirectX::XMVECTOR determinantView = XMMatrixDeterminant(view);
-        const DirectX::XMMATRIX invView = XMMatrixInverse(&determinantView, view);
-        DirectX::XMVECTOR determinantProj = XMMatrixDeterminant(proj);
-        const DirectX::XMMATRIX invProj = XMMatrixInverse(&determinantProj, proj);
-        DirectX::XMVECTOR determinantViewProj = XMMatrixDeterminant(viewProj);
-        const DirectX::XMMATRIX invViewProj = XMMatrixInverse(&determinantViewProj, viewProj);
-
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.View, XMMatrixTranspose(view));
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.InvView, XMMatrixTranspose(invView));
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.Proj, XMMatrixTranspose(proj));
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.InvProj, XMMatrixTranspose(invProj));
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.ViewProj, XMMatrixTranspose(viewProj));
-        XMStoreFloat4x4(&DirectXContext::Get()->m_MainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
-        DirectXContext::Get()->m_MainPassCB.EyePosW = DirectXContext::Get()->m_EyePosition;
-        DirectXContext::Get()->m_MainPassCB.RenderTargetSize = DirectX::XMFLOAT2(static_cast<float>(Application::Get()->GetWindow()->GetWidth()), static_cast<float>(Application::Get()->GetWindow()->GetHeight()));
-        DirectXContext::Get()->m_MainPassCB.InvRenderTargetSize = DirectX::XMFLOAT2(1.0f / Application::Get()->GetWindow()->GetWidth(), 1.0f / Application::Get()->GetWindow()->GetHeight());
-        DirectXContext::Get()->m_MainPassCB.NearZ = 1.0f;
-        DirectXContext::Get()->m_MainPassCB.FarZ = 1000.0f;
+        DirectXContext::Get()->m_Camera->Update();
 
         DirectXContext::Get()->m_BaseShader->Begin();
 
         const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
-        currPassCb->CopyData(0, DirectXContext::Get()->m_MainPassCB);
+        currPassCb->CopyData(0, DirectXContext::Get()->m_Camera->m_MainPassCB);
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }

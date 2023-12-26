@@ -4,6 +4,7 @@
 #include "DirectXShader.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
+#include "DirectXCamera.h"
 
 const int gNumFrameResources = 3;
 
@@ -32,6 +33,7 @@ namespace Engine
             D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
         s_Instance->InitializeMsaa();
 
+        s_Instance->m_Camera = std::make_unique<DirectXCamera>(Application::Get()->GetWindow()->GetWidth(), Application::Get()->GetWindow()->GetHeight(), 90.f, 0.1f, 1000.f);
         s_Instance->m_CommandObject = std::make_unique<DirectXCommandObject>();
         s_Instance->m_Swapchain = std::make_unique<DirectXSwapchain>(Application::Get()->GetWindow()->GetWidth(),
                                                                      Application::Get()->GetWindow()->GetHeight());
