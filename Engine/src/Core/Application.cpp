@@ -66,6 +66,6 @@ bool Application::OnWindowClose(Engine::WindowCloseEvent& pEvent)
 
 bool Application::OnWindowResize(const Engine::WindowResizeEvent& pEvent)
 {
-	// TODO: Implement with DX12
-	return false;
+	Engine::DirectXApi::Resize(pEvent.GetWidth(), pEvent.GetHeight());
+	return true;
 }
