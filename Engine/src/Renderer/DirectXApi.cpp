@@ -75,19 +75,13 @@ namespace Engine
         DirectXContext::Get()->m_MainPassCB.NearZ = 1.0f;
         DirectXContext::Get()->m_MainPassCB.FarZ = 1000.0f;
 
-        ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXContext::Get()->m_PassConstantHeap.Get() };
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(DirectXContext::Get()->m_BasePipeline->GetState().Get());
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(DirectXContext::Get()->m_BasePipeline->GetSignature().Get());
 
         const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
         currPassCb->CopyData(0, DirectXContext::Get()->m_MainPassCB);
         
-        const int passCbvIndex = DirectXContext::Get()->m_CurrentFrameData;
-        auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(DirectXContext::Get()->m_PassConstantHeap->GetGPUDescriptorHandleForHeapStart());
-        passCbvHandle.Offset(passCbvIndex, DirectXContext::Get()->m_CbvSrvUavDescriptorSize);
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(1, passCbvHandle);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }
 
     void DirectXApi::EndFrame()
