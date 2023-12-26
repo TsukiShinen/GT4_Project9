@@ -1,13 +1,13 @@
-﻿#include "Model.h"
+﻿#include "Mesh.h"
 
 #include "DirectXCommandObject.h"
 #include "DirectXContext.h"
-#include "DirectXPipeline.h"
+#include "Shader.h"
 #include "Debug/Log.h"
 
 namespace Engine
 {
-    Model::Model(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices)
+    Mesh::Mesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices)
         : m_IndexCount(pIndices.size())
     {
         // ===== Constant Buffer Heaps =====
@@ -56,11 +56,11 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->Execute();
     }
 
-    Model::~Model()
+    Mesh::~Mesh()
     {
     }
 
-    void Model::Draw()
+    void Mesh::Draw()
     {
         if(m_NumFramesDirty > 0)
         {

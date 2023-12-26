@@ -1,4 +1,4 @@
-﻿#include "DirectXPipeline.h"
+﻿#include "Shader.h"
 
 #include <comdef.h>
 
@@ -8,7 +8,7 @@
 namespace Engine
 {
 
-    DirectXPipeline::DirectXPipeline(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
+    Shader::Shader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
     {
         const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
         const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
@@ -18,11 +18,11 @@ namespace Engine
         InitializePipelineState(pLayout, vsByteCode, psByteCode);
     }
 
-    DirectXPipeline::~DirectXPipeline()
+    Shader::~Shader()
     {
     }
 
-    void DirectXPipeline::InitializeSignature()
+    void Shader::InitializeSignature()
     {
         CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
@@ -54,7 +54,7 @@ namespace Engine
             IID_PPV_ARGS(&m_RootSignature)));
     }
     
-    void DirectXPipeline::InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout, Microsoft::WRL::ComPtr<ID3DBlob> pVsByteCode, Microsoft::WRL::ComPtr<ID3DBlob> pPsByteCode)
+    void Shader::InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout, Microsoft::WRL::ComPtr<ID3DBlob> pVsByteCode, Microsoft::WRL::ComPtr<ID3DBlob> pPsByteCode)
     {
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
         ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));

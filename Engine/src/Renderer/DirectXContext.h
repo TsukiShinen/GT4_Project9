@@ -11,7 +11,7 @@ namespace Engine
 {
     class DirectXCommandObject;
     class DirectXSwapchain;
-    class DirectXPipeline;
+    class Shader;
 
     class DirectXContext
     {
@@ -31,7 +31,7 @@ namespace Engine
 
         std::unique_ptr<DirectXCommandObject> m_CommandObject;
 
-        std::unique_ptr<DirectXPipeline> m_BasePipeline;
+        std::unique_ptr<Shader> m_BasePipeline;
         
         UINT m_CbvSrvUavDescriptorSize = 0;
         
@@ -56,8 +56,8 @@ namespace Engine
         friend class DirectXApi;
         friend class DirectXSwapchain;
         friend class DirectXCommandObject;
-        friend class DirectXPipeline;
-        friend class Model;
+        friend class Shader;
+        friend class Mesh;
     };
     
 }

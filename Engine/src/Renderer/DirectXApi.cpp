@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "DirectXCommandObject.h"
-#include "DirectXPipeline.h"
+#include "Shader.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 

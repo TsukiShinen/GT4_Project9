@@ -1,7 +1,7 @@
 ﻿#include "DirectXContext.h"
 
 #include "DirectXCommandObject.h"
-#include "DirectXPipeline.h"
+#include "Shader.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 
@@ -42,7 +42,7 @@ namespace Engine
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
             {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
         };
-        s_Instance->m_BasePipeline = std::make_unique<DirectXPipeline>(layout, L"Shaders\\color.hlsl");
+        s_Instance->m_BasePipeline = std::make_unique<Shader>(layout, L"Shaders\\color.hlsl");
 
         // ===== Frame Resources =====
         D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;

@@ -4,11 +4,11 @@
 
 namespace Engine
 {
-    class DirectXPipeline
+    class Shader
     {
     public:
-        DirectXPipeline(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
-        ~DirectXPipeline();
+        Shader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
+        ~Shader();
 
         Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
         Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }
