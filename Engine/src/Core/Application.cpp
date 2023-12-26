@@ -3,7 +3,6 @@
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
 #include "Renderer/DirectXApi.h"
-#include "Renderer/GeometryGenerator.h"
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;

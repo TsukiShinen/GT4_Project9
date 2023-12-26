@@ -19,22 +19,29 @@ namespace Engine
         const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(Vertex);
         const auto indicesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(Vertex);
         
-        ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_Geometry.VertexBufferCPU));
-        CopyMemory(m_Geometry.VertexBufferCPU->GetBufferPointer(), pVertices.data(), verticesByteSize);
+        ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_VertexBufferCpu));
+        CopyMemory(m_VertexBufferCpu->GetBufferPointer(), pVertices.data(), verticesByteSize);
 
-        ThrowIfFailed(D3DCreateBlob(indicesByteSize, &m_Geometry.IndexBufferCPU));
-        CopyMemory(m_Geometry.IndexBufferCPU->GetBufferPointer(), pIndices.data(), indicesByteSize);
+        ThrowIfFailed(D3DCreateBlob(indicesByteSize, &m_IndexBufferCpu));
+        CopyMemory(m_IndexBufferCpu->GetBufferPointer(), pIndices.data(), indicesByteSize);
 
-        m_Geometry.VertexBufferGPU = d3dUtil::CreateDefaultBuffer(DirectXContext::Get()->m_Device.Get(),
-            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pVertices.data(), verticesByteSize, m_Geometry.VertexBufferUploader);
+        m_VertexBufferGpu = d3dUtil::CreateDefaultBuffer(
+            DirectXContext::Get()->m_Device.Get(),
+            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pVertices.data(), verticesByteSize,
+            m_VertexBufferUploader);
 
-        m_Geometry.IndexBufferGPU = d3dUtil::CreateDefaultBuffer(DirectXContext::Get()->m_Device.Get(),
-            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize, m_Geometry.IndexBufferUploader);
+        m_IndexBufferGpu = d3dUtil::CreateDefaultBuffer(
+            DirectXContext::Get()->m_Device.Get(),
+            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize,
+            m_IndexBufferUploader);
 
-        m_Geometry.VertexByteStride = sizeof(Vertex);
-        m_Geometry.VertexBufferByteSize = verticesByteSize;
-        m_Geometry.IndexFormat = DXGI_FORMAT_R16_UINT;
-        m_Geometry.IndexBufferByteSize = indicesByteSize;
+        m_VertexBuffer.BufferLocation = m_VertexBufferGpu->GetGPUVirtualAddress();
+        m_VertexBuffer.StrideInBytes = sizeof(Vertex);
+        m_VertexBuffer.SizeInBytes = verticesByteSize;
+        
+        m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
+        m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
+        m_IndexBuffer.SizeInBytes = indicesByteSize;
 
         DirectXContext::Get()->m_CommandObject->Execute();
     }
@@ -60,10 +67,8 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(DirectXContext::Get()->m_BasePipeline->GetState().Get());
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(DirectXContext::Get()->m_BasePipeline->GetSignature().Get());
 
-        auto vertexBufferView = m_Geometry.VertexBufferView();
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-        auto indexBufferView = m_Geometry.IndexBufferView();
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveType);
 
         // Offset to the CBV in the descriptor heap for this object and for this frame resource.
