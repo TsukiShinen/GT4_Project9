@@ -1,5 +1,6 @@
 ﻿#include "Application.h"
 
+#include "Timestep.h"
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
 #include "Renderer/DirectXApi.h"
@@ -26,6 +27,10 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	};
 	std::vector<uint16_t> indices = { 0, 1, 2 };
 	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices);
+	
+	__int64 countsPerSec;
+	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
+	m_SecondsPerCount = 1.0 / static_cast<double>(countsPerSec);
 }
 
 Application::~Application()
@@ -40,6 +45,12 @@ void Application::Run()
 	{
 		if (!m_IsMinimized)
 		{
+			__int64 time;
+			QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&time));
+			Engine::Timestep deltaTime = (time - m_LastFrameTime) * m_SecondsPerCount;
+			m_LastFrameTime = time;
+			m_Fps = 1.f / deltaTime.GetSeconds();
+			
 			Engine::DirectXApi::BeginFrame();
 			
 			m_Quad->Draw();
@@ -66,6 +77,6 @@ bool Application::OnWindowClose(Engine::WindowCloseEvent& pEvent)
 
 bool Application::OnWindowResize(const Engine::WindowResizeEvent& pEvent)
 {
-	// TODO: Implement with DX12
-	return false;
+	Engine::DirectXApi::Resize(pEvent.GetWidth(), pEvent.GetHeight());
+	return true;
 }

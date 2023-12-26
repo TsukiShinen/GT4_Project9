@@ -49,7 +49,9 @@ private:
 
     bool m_IsRunning = true;
     bool m_IsMinimized = false;
-    float m_LastFrameTime = 0.0f;
+    __int64 m_LastFrameTime = 0;
+	double m_SecondsPerCount;
+    float m_Fps = 0.0f;
 
     Engine::WindowsWindow* m_Window;
 

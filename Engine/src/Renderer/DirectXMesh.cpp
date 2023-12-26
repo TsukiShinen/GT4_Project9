@@ -44,6 +44,7 @@ namespace Engine
         m_IndexBuffer.SizeInBytes = indicesByteSize;
 
         DirectXContext::Get()->m_CommandObject->Execute();
+        DirectXContext::Get()->m_CommandObject->Flush();
     }
 
     DirectXMesh::~DirectXMesh()
