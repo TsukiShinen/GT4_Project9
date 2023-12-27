@@ -12,6 +12,8 @@ namespace Engine
     {
     public:
         DirectXResourceManager(uint32_t pMaxTextures);
+
+        void BindDescriptorsHeap() const;
         
         Texture& LoadTexture(const std::wstring& pPath, const std::string& pName);
         Texture& GetTexture(const std::string& pName) { return *m_Textures[pName]; }

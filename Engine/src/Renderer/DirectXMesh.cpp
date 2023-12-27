@@ -2,22 +2,23 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXContext.h"
-#include "DirectXShader.h"
+#include "Shaders/DirectXShader.h"
 #include "Debug/Log.h"
 
 namespace Engine
 {
-    DirectXMesh::DirectXMesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices)
-        : m_IndexCount(pIndices.size())
+    DirectXMesh::DirectXMesh(std::vector<VertexTex>& pVertices, std::vector<uint16_t>& pIndices, std::shared_ptr<DirectXShader> pShader)
+        : m_IndexCount(pIndices.size()), m_Shader(pShader)
     {
         // ===== Constant Buffer =====
         m_ConstantBuffer = std::make_unique<UploadBuffer<ObjectConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
 
         // ===== Data =====
+        DirectXContext::Get()->m_CommandObject->GetCommandAllocator()->Reset();
         DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator());
 
-        const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(Vertex);
-        const auto indicesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(Vertex);
+        const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(VertexTex);
+        const auto indicesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(VertexTex);
         
         ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_VertexBufferCpu));
         CopyMemory(m_VertexBufferCpu->GetBufferPointer(), pVertices.data(), verticesByteSize);
@@ -36,7 +37,7 @@ namespace Engine
             m_IndexBufferUploader);
 
         m_VertexBuffer.BufferLocation = m_VertexBufferGpu->GetGPUVirtualAddress();
-        m_VertexBuffer.StrideInBytes = sizeof(Vertex);
+        m_VertexBuffer.StrideInBytes = sizeof(VertexTex);
         m_VertexBuffer.SizeInBytes = verticesByteSize;
         
         m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
@@ -45,10 +46,6 @@ namespace Engine
 
         DirectXContext::Get()->m_CommandObject->Execute();
         DirectXContext::Get()->m_CommandObject->Flush();
-    }
-
-    DirectXMesh::~DirectXMesh()
-    {
     }
 
     void DirectXMesh::Draw()
@@ -65,12 +62,11 @@ namespace Engine
             m_NumFramesDirty--;
         }
 
+        m_Shader->Bind(this);
+        
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveType);
-
-        // Offset to the CBV in the descriptor heap for this object and for this frame resource.
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(0, m_ConstantBuffer->Resource()->GetGPUVirtualAddress());
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->DrawIndexedInstanced(m_IndexCount, 1, 0, 0, 0);
     }

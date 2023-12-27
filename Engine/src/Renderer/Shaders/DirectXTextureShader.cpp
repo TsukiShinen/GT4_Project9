@@ -5,6 +5,8 @@
 #include "../DirectXSwapchain.h"
 #include "../DirectXCommandObject.h"
 #include "Debug/Log.h"
+#include "Renderer/Resource/DirectXResourceManager.h"
+#include "Renderer/Resource/Texture.h"
 
 namespace Engine
 {
@@ -19,8 +21,15 @@ namespace Engine
         InitializePipelineState(pLayout, vsByteCode, psByteCode);
     }
 
-    DirectXTextureShader::~DirectXTextureShader()
+    void DirectXTextureShader::Bind(DirectXMesh* pMesh)
     {
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
+        
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(2, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
+        
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(0, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(pMesh->GetTexture()));
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress());
     }
 
     void DirectXTextureShader::InitializeSignature()
@@ -29,25 +38,26 @@ namespace Engine
 
         CD3DX12_DESCRIPTOR_RANGE texTable;
         texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        slotRootParameter[0].InitAsDescriptorTable(0, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+        slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
         slotRootParameter[1].InitAsConstantBufferView(0);
         slotRootParameter[2].InitAsConstantBufferView(1);
 
-        const CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter, 0, nullptr,
+        const auto staticSamplers = GetStaticSamplers();
+
+        const CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(3, slotRootParameter, staticSamplers.size(), staticSamplers.data(),
                                                       D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
         Microsoft::WRL::ComPtr<ID3DBlob> serializedRootSig = nullptr;
         Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-        const HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
-                                                       serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+        THROW_IF_FAILED(D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+                                                       serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf()));
 
         if (errorBlob != nullptr)
         {
             CORE_ERROR(static_cast<char*>(errorBlob->GetBufferPointer()));
         }
-        ThrowIfFailed(hr);
 
-        ThrowIfFailed(DirectXContext::Get()->m_Device->CreateRootSignature(
+        THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateRootSignature(
             0,
             serializedRootSig->GetBufferPointer(),
             serializedRootSig->GetBufferSize(),
@@ -82,12 +92,63 @@ namespace Engine
                                          ? (DirectXContext::Get()->m_4xMsaaQuality - 1)
                                          : 0;
         psoDesc.DSVFormat = DirectXSwapchain::k_DepthStencilFormat;
-        ThrowIfFailed(DirectXContext::Get()->m_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
+        THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
     }
 
-    void DirectXTextureShader::Begin()
-    {
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
-    }
+	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> DirectXTextureShader::GetStaticSamplers()
+	{
+		// Applications usually only need a handful of samplers.  So just define them all up front
+		// and keep them available as part of the root signature.  
+
+		const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+			0, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC pointClamp(
+			1, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC linearWrap(
+			2, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC linearClamp(
+			3, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
+			4, // shaderRegister
+			D3D12_FILTER_ANISOTROPIC, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressW
+			0.0f,                             // mipLODBias
+			8);                               // maxAnisotropy
+
+		const CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
+			5, // shaderRegister
+			D3D12_FILTER_ANISOTROPIC, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressW
+			0.0f,                              // mipLODBias
+			8);                                // maxAnisotropy
+
+		return { 
+			pointWrap, pointClamp,
+			linearWrap, linearClamp, 
+			anisotropicWrap, anisotropicClamp };
+	}
 }

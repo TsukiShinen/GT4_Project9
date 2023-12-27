@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include <DirectXMath.h>
 
-#include "d3dUtil.h"
 #include "DirectXFrameData.h"
 #include "MathHelper.h"
+#include "Resource/Texture.h"
 
 namespace Engine
 {
+    class DirectXShader;
+
     struct ObjectConstants
     {
         DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
@@ -15,9 +17,13 @@ namespace Engine
     class DirectXMesh
     {
     public:
-        DirectXMesh(std::vector<Vertex>& pVertices, std::vector<uint16_t>& pIndices);
-        ~DirectXMesh();
+        DirectXMesh(std::vector<VertexTex>& pVertices, std::vector<uint16_t>& pIndices, std::shared_ptr<DirectXShader> pShader);
+
         void Draw();
+
+        [[nodiscard]] UploadBuffer<ObjectConstants>& GetConstantBuffer() const { return *m_ConstantBuffer; }
+        [[nodiscard]] Texture& GetTexture() { return m_Texture; }
+        void SetTexture(const Texture& pTexture) { m_Texture = pTexture; }
 
     private:
         DirectX::XMFLOAT4X4 m_TransformMatrix = MathHelper::Identity4x4();
@@ -38,9 +44,13 @@ namespace Engine
         D3D12_VERTEX_BUFFER_VIEW m_VertexBuffer;
         D3D12_INDEX_BUFFER_VIEW m_IndexBuffer;
         UINT m_IndexCount = 0;
+
+        std::shared_ptr<DirectXShader> m_Shader;
         
         std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_ConstantBufferHeap = nullptr;
+
+        Texture m_Texture;
     };
     
 }

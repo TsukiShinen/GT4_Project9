@@ -4,6 +4,7 @@
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
 #include "Renderer/DirectXApi.h"
+#include "Renderer/Resource/DirectXResourceManager.h"
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
@@ -21,12 +22,14 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	Engine::DirectXApi::Initialize();
 	
 	std::vector vertices = {
-		Engine::Vertex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
-		Engine::Vertex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT4(0, 1, 0, 1)},
-		Engine::Vertex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)}
+		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
+		Engine::VertexTex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT2(0, 1)},
+		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 0)},
+		Engine::VertexTex{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 1)}
 	};
-	std::vector<uint16_t> indices = { 0, 1, 2 };
-	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices);
+	std::vector<uint16_t> indices = { 0, 1, 2, 3, 2, 1 };
+	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices, Engine::DirectXContext::Get()->GetTextureShader());
+	m_Quad->SetTexture(Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone"));
 	
 	__int64 countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));

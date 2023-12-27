@@ -16,6 +16,12 @@ namespace Engine
         DirectX::XMFLOAT3 Position;
         DirectX::XMFLOAT4 Color{1, 1, 1, 1};
     };
+
+    struct VertexTex
+    {
+        DirectX::XMFLOAT3 Position;
+        DirectX::XMFLOAT2 TexCoord{1, 1};
+    };
     
     struct DirectXFrameData
     {
