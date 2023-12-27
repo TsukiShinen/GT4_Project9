@@ -31,6 +31,10 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	__int64 countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
 	m_SecondsPerCount = 1.0 / static_cast<double>(countsPerSec);
+
+	__int64 time;
+	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&time));
+	m_LastFrameTime = time;
 }
 
 Application::~Application()
@@ -50,7 +54,9 @@ void Application::Run()
 			Engine::Timestep deltaTime = (time - m_LastFrameTime) * m_SecondsPerCount;
 			m_LastFrameTime = time;
 			m_Fps = 1.f / deltaTime.GetSeconds();
-			
+
+			GameUpdate(deltaTime.GetSeconds());
+
 			Engine::DirectXApi::BeginFrame();
 			
 			m_Quad->Draw();
@@ -79,4 +85,9 @@ bool Application::OnWindowResize(const Engine::WindowResizeEvent& pEvent)
 {
 	Engine::DirectXApi::Resize(pEvent.GetWidth(), pEvent.GetHeight());
 	return true;
+}
+
+void Application::GameUpdate(float dt)
+{
+	Engine::DirectXApi::UpdateCamera(dt);
 }
