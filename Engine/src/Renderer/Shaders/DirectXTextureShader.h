@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include "DirectXContext.h"
+#include "../DirectXContext.h"
 
 namespace Engine
 {
-    class DirectXShader
+    class DirectXTextureShader
     {
     public:
-        DirectXShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
-        ~DirectXShader();
+        DirectXTextureShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
+        ~DirectXTextureShader();
 
         Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
         Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }

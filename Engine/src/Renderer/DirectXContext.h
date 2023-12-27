@@ -56,6 +56,7 @@ namespace Engine
         friend class DirectXCommandObject;
         friend class DirectXShader;
         friend class DirectXMesh;
+        friend class DirectXResourceManager;
     };
     
 }

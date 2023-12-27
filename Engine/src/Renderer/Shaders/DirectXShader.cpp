@@ -2,8 +2,8 @@
 
 #include <comdef.h>
 
-#include "DirectXSwapchain.h"
-#include "DirectXCommandObject.h"
+#include "../DirectXSwapchain.h"
+#include "../DirectXCommandObject.h"
 #include "Debug/Log.h"
 
 namespace Engine
