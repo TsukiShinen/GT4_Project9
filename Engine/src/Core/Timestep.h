@@ -2,19 +2,20 @@
 
 namespace Engine
 {
-    class Timestep
-    {
-    public:
-        Timestep(const float pTime = 0.0f)
-            : m_Time(pTime)
-        {
-        }
+	class Timestep
+	{
+	public:
+		Timestep(const float pTime = 0.0f)
+			: m_Time(pTime)
+		{
+		}
 
-        explicit operator float() const { return m_Time; }
+		explicit operator float() const { return m_Time; }
 
-        [[nodiscard]] float GetSeconds() const { return m_Time; }
-        [[nodiscard]] float GetMilliseconds() const { return m_Time * 1000.0f; }
-    private:
-        float m_Time;
-    };
+		[[nodiscard]] float GetSeconds() const { return m_Time; }
+		[[nodiscard]] float GetMilliseconds() const { return m_Time * 1000.0f; }
+
+	private:
+		float m_Time;
+	};
 }

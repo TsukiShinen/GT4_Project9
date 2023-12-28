@@ -5,8 +5,7 @@
 namespace Engine
 {
 	DirectXMaterial::DirectXMaterial(DirectXShader* shader)
-		: m_IsDirty(true), m_Shader(shader)
+		: m_Shader(shader), m_IsDirty(true)
 	{
 	}
-
 }

@@ -20,5 +20,3 @@ namespace Engine
 		Texture* m_Texture;
 	};
 }
-
-

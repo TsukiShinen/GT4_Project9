@@ -15,5 +15,3 @@ namespace Engine
 		void Bind(DirectXMesh* mesh) override;
 	};
 }
-
-

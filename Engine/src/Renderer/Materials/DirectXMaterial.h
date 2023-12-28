@@ -17,5 +17,3 @@ namespace Engine
 		bool m_IsDirty;
 	};
 }
-
-
