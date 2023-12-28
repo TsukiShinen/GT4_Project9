@@ -8,13 +8,14 @@
 namespace Engine
 {
 	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader)
-		: m_Data(), DirectXMaterial((DirectXShader*)shader), m_Texture(nullptr)
+		: DirectXMaterial((DirectXShader*)shader), m_Data(), m_Texture(nullptr)
 	{
 		m_MatCB = std::make_unique<UploadBuffer<LitMaterialConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
 	}
 
-	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo, DirectX::XMFLOAT4 specular, float smoothness, Texture* texture)
-		: m_Data(albedo, specular, smoothness), DirectXMaterial((DirectXShader*)shader), m_Texture(texture)
+	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo,
+	                                       DirectX::XMFLOAT4 specular, float smoothness, Texture* texture)
+		: DirectXMaterial((DirectXShader*)shader), m_Data(albedo, specular, smoothness), m_Texture(texture)
 	{
 		m_MatCB = std::make_unique<UploadBuffer<LitMaterialConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
 	}
@@ -34,8 +35,10 @@ namespace Engine
 
 		m_Shader->Bind(objectConstantBuffer);
 
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(2, m_MatCB->Resource()->GetGPUVirtualAddress());
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
+			2, m_MatCB->Resource()->GetGPUVirtualAddress());
 		if (m_Texture != nullptr)
-			DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(3, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
+			DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(
+				3, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
 	}
 }

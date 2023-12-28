@@ -88,7 +88,8 @@ namespace Engine
 						ss.ignore(1, '/');
 					}
 
-					if (ss.peek() == ' ') {
+					if (ss.peek() == ' ')
+					{
 						counter = 0;
 						ss.ignore(1, ' ');
 					}
@@ -104,7 +105,7 @@ namespace Engine
 			DirectX::XMFLOAT2 uv = uvs[face_uv_index[i] - 1];
 			DirectX::XMFLOAT3 normal = normals[face_normal_index[i] - 1];
 
-			objVertices->push_back({ vertex, uv, normal });
+			objVertices->push_back({vertex, uv, normal});
 		}
 	}
 }

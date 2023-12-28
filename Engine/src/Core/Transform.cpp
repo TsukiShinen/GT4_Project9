@@ -9,10 +9,10 @@ Engine::Transform::Transform(DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotat
 }
 
 void Engine::Transform::SetRotation(DirectX::XMFLOAT3 rotation)
-{	
-	DirectX::XMStoreFloat4(&m_Quat, 
-		DirectX::XMQuaternionRotationRollPitchYawFromVector(
-		DirectX::XMLoadFloat3(&rotation)));
+{
+	DirectX::XMStoreFloat4(&m_Quat,
+	                       DirectX::XMQuaternionRotationRollPitchYawFromVector(
+		                       DirectX::XMLoadFloat3(&rotation)));
 
 	UpdateMatrix();
 }
@@ -69,7 +69,7 @@ void Engine::Transform::MoveUp(float speed, float direction)
 
 void Engine::Transform::RotateWorldX(float angle)
 {
-	DirectX::XMVECTOR rotationQuaternion = DirectX::XMQuaternionRotationRollPitchYaw(angle, 0.f , 0.0f);
+	DirectX::XMVECTOR rotationQuaternion = DirectX::XMQuaternionRotationRollPitchYaw(angle, 0.f, 0.0f);
 	DirectX::XMVECTOR newQuat = DirectX::XMQuaternionMultiply(DirectX::XMLoadFloat4(&m_Quat), rotationQuaternion);
 	DirectX::XMStoreFloat4(&m_Quat, newQuat);
 
@@ -171,7 +171,7 @@ void Engine::Transform::UpdateMatrix()
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat3(&m_Scale));
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMLoadFloat4x4(&m_Rot);
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat3(&m_Position));
-	DirectX::XMMATRIX world = scaleMatrix * rotationMatrix * translationMatrix; 
+	DirectX::XMMATRIX world = scaleMatrix * rotationMatrix * translationMatrix;
 
 	DirectX::XMStoreFloat4x4(&m_World, world);
 }
@@ -183,23 +183,26 @@ void Engine::Transform::UpdateRotation()
 
 	/// Updates the directional axis with the rotation matrix
 	// Forward vector 
-	DirectX::XMVECTOR forwardVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f), DirectX::XMLoadFloat4(&m_Quat));
+	DirectX::XMVECTOR forwardVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f),
+	                                                           DirectX::XMLoadFloat4(&m_Quat));
 	forwardVector = DirectX::XMVector3Normalize(forwardVector);
 	DirectX::XMStoreFloat3(&m_Forward, forwardVector);
 
 	// Right vector
-	DirectX::XMVECTOR rightVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f), DirectX::XMLoadFloat4(&m_Quat));
+	DirectX::XMVECTOR rightVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(1.f, 0.f, 0.f, 0.f),
+	                                                         DirectX::XMLoadFloat4(&m_Quat));
 	rightVector = DirectX::XMVector3Normalize(rightVector);
 	DirectX::XMStoreFloat3(&m_Right, rightVector);
 
 	// Up vector
-	DirectX::XMVECTOR upVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f), DirectX::XMLoadFloat4(&m_Quat));
+	DirectX::XMVECTOR upVector = DirectX::XMVector3Rotate(DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f),
+	                                                      DirectX::XMLoadFloat4(&m_Quat));
 	upVector = DirectX::XMVector3Normalize(upVector);
 	DirectX::XMStoreFloat3(&m_Up, upVector);
 	/// -----------------------------------------------------
 }
 
-DirectX::XMMATRIX Engine::Transform::GetWorld() const 
+DirectX::XMMATRIX Engine::Transform::GetWorld() const
 {
 	return DirectX::XMLoadFloat4x4(&m_World);
 }

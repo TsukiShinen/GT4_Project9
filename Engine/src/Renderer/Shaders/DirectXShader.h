@@ -6,20 +6,18 @@
 
 namespace Engine
 {
-    class DirectXShader
-    {
-    public:
-        Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
-        Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }
+	class DirectXShader
+	{
+	public:
+		Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
+		Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }
 
         virtual void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) = 0;
 
-    protected:
-        
-        static std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
-        
-        Microsoft::WRL::ComPtr<ID3D12RootSignature> m_RootSignature = nullptr;
-        Microsoft::WRL::ComPtr<ID3D12PipelineState> m_PipelineState;
-    };
-    
+	protected:
+		static std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_RootSignature = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_PipelineState;
+	};
 }

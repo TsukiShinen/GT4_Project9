@@ -15,5 +15,3 @@ namespace Engine
 		void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) override;
 	};
 }
-
-

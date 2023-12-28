@@ -2,81 +2,58 @@
 #include <assert.h>
 #include <string>
 
+#include "Timestep.h"
 #include "Events/ApplicationEvent.h"
 #include "Platform/WindowsWindow.h"
 #include "Renderer/DirectXMesh.h"
 #include "Core/Object.h"
 
-struct ApplicationCommandLineArgs
+int main(int pArgc, char** pArgv);
+
+namespace Engine
 {
-    int Count = 0;
-    char** Args = nullptr;
+	struct ApplicationSpecification
+	{
+		std::string Name = "Application";
+	};
 
-    const char* operator[](const int pIndex) const
-    {
-        assert(pIndex < Count);
-        return Args[pIndex];
-    }
-};
+	class Application
+	{
+	public:
+		Application(const ApplicationSpecification& pSpecification);
+		virtual ~Application();
 
-struct ApplicationSpecification
-{
-    std::string Name = "Application";
-    ApplicationCommandLineArgs CommandLineArgs;
-};
+		[[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
-class Application
-{
-public:
-    Application(const ApplicationSpecification& pSpecification);
-    virtual ~Application();
-    
-    void Run();
+		[[nodiscard]] WindowsWindow* GetWindow() const { return m_Window; }
+		void SetMinimized(const bool pValue) { m_IsMinimized = pValue; }
 
-    [[nodiscard]] const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+		static Application* Get() { return s_Instance; }
 
-    Engine::WindowsWindow* GetWindow() const { return m_Window; }
-    void SetMinimized(const bool pValue) { m_IsMinimized = pValue; }
+	protected:
+		virtual void Update(Timestep pDeltaTime);
+		virtual void Draw() {}
+		virtual void OnEvent(Event& pEvent);
 
-    static Application* Get() { return s_Instance; }
-    
-private:
-    virtual void OnEvent(Engine::Event& pEvent);
-    
-    bool OnWindowClose(Engine::WindowCloseEvent& pEvent);
-    bool OnWindowResize(const Engine::WindowResizeEvent& pEvent);
+	private:
+		void Run();
 
-    void GameUpdate(float dt);
+		bool OnWindowClose(WindowCloseEvent& pEvent);
+		bool OnWindowResize(const WindowResizeEvent& pEvent);
 
-    ApplicationSpecification m_Specification;
+	private:
+		ApplicationSpecification m_Specification;
 
-    bool m_IsRunning = true;
-    bool m_IsMinimized = false;
-    __int64 m_LastFrameTime = 0;
-	double m_SecondsPerCount;
-    float m_Fps = 0.0f;
+		bool m_IsRunning = true;
+		bool m_IsMinimized = false;
+		__int64 m_LastFrameTime = 0;
+		double m_SecondsPerCount;
+		float m_Fps = 0.0f;
 
-    Engine::WindowsWindow* m_Window;
+		WindowsWindow* m_Window;
 
-    std::unique_ptr<Engine::DirectXSimpleShader> m_SimpleShader;
-    std::unique_ptr<Engine::DirectXTextureShader> m_TextureShader;
-    std::unique_ptr<Engine::DirectXLitShader> m_LitShader;
-
-    std::unique_ptr<Engine::DirectXSimpleMaterial> m_SimpleMaterial;
-    std::unique_ptr<Engine::DirectXTextureMaterial> m_TextureMaterial;
-    std::unique_ptr<Engine::DirectXLitMaterial> m_LitMaterial;
-    std::unique_ptr<Engine::DirectXLitMaterial> m_BingusMaterial;
-    std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial;
-    std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial2;
-
-    std::unique_ptr<Engine::DirectXMesh> m_BingusMesh;
-    std::unique_ptr<Engine::DirectXMesh> m_BunnyMesh;
-    std::unique_ptr<Engine::DirectXMesh> m_Triangle1;
-    std::unique_ptr<Engine::DirectXMesh> m_Triangle2;
-
-    std::unique_ptr<Engine::Object> m_BingusObject;
-    std::unique_ptr<Engine::Object> m_BunnyObject;
-    std::unique_ptr<Engine::Object> m_BunnyObject2;
-
-    static Application* s_Instance;
-};
+	private:
+		static Application* s_Instance;
+		friend int ::main(int pArgc, char** pArgv);
+	};
+}

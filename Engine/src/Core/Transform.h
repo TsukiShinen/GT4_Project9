@@ -1,17 +1,17 @@
-#pragma once 
+#pragma once
 #include <DirectXMath.h>
 
-namespace Engine {
-
+namespace Engine
+{
 	/// <summary>
 	/// A Basic Transform class to manipulates Directx's meshes' position, rotation, and scale.
 	/// </summary>
-	class Transform {
-
+	class Transform
+	{
 	public:
+		Transform(DirectX::XMFLOAT3 position = {0.f, 0.f, 0.f}, DirectX::XMFLOAT3 rotation = {0.f, 0.f, 0.f},
+		          DirectX::XMFLOAT3 scale = {1.f, 1.f, 1.f});
 
-		Transform(DirectX::XMFLOAT3 position = {0.f,0.f,0.f}, DirectX::XMFLOAT3 rotation = { 0.f,0.f,0.f }, DirectX::XMFLOAT3 scale = { 1.f,1.f,1.f });
-		
 		/// <summary>
 		/// Sets transform's position in world space.
 		/// </summary>
@@ -129,7 +129,6 @@ namespace Engine {
 		/// GETTERS functions end --------------------
 
 	private:
-
 		/// <summary>
 		/// Updates the transform's world matrix.
 		/// </summary>
@@ -140,15 +139,15 @@ namespace Engine {
 		/// </summary>
 		void UpdateRotation();
 
-		DirectX::XMFLOAT3 m_Position = { 0.f, 0.f, 0.f };
+		DirectX::XMFLOAT3 m_Position = {0.f, 0.f, 0.f};
 
-		DirectX::XMFLOAT3 m_Right = { 1.f, 0.f, 0.f };
-		DirectX::XMFLOAT3 m_Up = { 0.f, 1.f, 0.f };
-		DirectX::XMFLOAT3 m_Forward = { 0.f, 0.f, 1.f };
+		DirectX::XMFLOAT3 m_Right = {1.f, 0.f, 0.f};
+		DirectX::XMFLOAT3 m_Up = {0.f, 1.f, 0.f};
+		DirectX::XMFLOAT3 m_Forward = {0.f, 0.f, 1.f};
 
-		DirectX::XMFLOAT3 m_Scale = { 1.f, 1.f, 1.f };
+		DirectX::XMFLOAT3 m_Scale = {1.f, 1.f, 1.f};
 
-		DirectX::XMFLOAT4 m_Quat = { 0.f,0.f,0.f, 1.f };
+		DirectX::XMFLOAT4 m_Quat = {0.f, 0.f, 0.f, 1.f};
 
 		DirectX::XMFLOAT4X4 m_Rot = DirectX::XMFLOAT4X4(
 			1.0f, 0.0f, 0.0f, 0.0f,

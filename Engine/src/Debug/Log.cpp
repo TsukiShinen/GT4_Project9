@@ -15,7 +15,7 @@ namespace Engine
 		std::strftime(timestamp, sizeof(timestamp), "%H:%M:%S", timeInfo);
 
 		const bool isError = pLevel < Warn;
-		
+
 		va_list args;
 		va_start(args, pMessage);
 		auto message = FormatMessageV(pMessage, args);
