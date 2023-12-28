@@ -24,9 +24,13 @@ namespace Engine
 
 		void MoveXAxis(float dt, float value);
 
-		void MouseMove(float dt);
+		void MoveYAxis(float dt, float value);
+
+		void MouseMove(float dt); 	//TODO 
 
 		void Pitch(float dt, float value);
+
+		void Roll(float dt, float value);
 
 		void Rotate(float dt, float value);
 

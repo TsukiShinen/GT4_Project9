@@ -55,57 +55,54 @@ namespace Engine
         if (Input::IsKeyPressed(Engine::Key::D)) {
             MoveXAxis(dt, 1.f);
         }
+        if (Input::IsKeyPressed(Engine::Key::R)) {
+            MoveYAxis(dt, 1.f);
+        }
+        if (Input::IsKeyPressed(Engine::Key::F)) {
+            MoveYAxis(dt, -1.f);
+        }
         if (Input::IsKeyPressed(Engine::Key::A)) {
-            Rotate(dt, -.5f);
+            Rotate(dt, -1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::E)) {
-            Rotate(dt, .5f);
+            Rotate(dt, 1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::W)) {
-            Pitch(dt, .5f);
+        if (Input::IsKeyPressed(Engine::Key::G)) {
+            Pitch(dt, 1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::X)) {
-            Pitch(dt, -.5f);
-        }
-
+        if (Input::IsKeyPressed(Engine::Key::T)) {
+            Pitch(dt, -1.f);
+        }        
     }
 
     void DirectXCamera::MoveZAxis(float dt, float value)
     {
-        DirectX::XMVECTOR forward = m_transform->GetForwardVector();
-        DirectX::XMVECTOR s = DirectX::XMVectorReplicate(dt * value);
-        DirectX::XMVECTOR position = m_transform->GetPosition();
-        DirectX::XMVECTOR newPos = DirectX::XMVectorMultiplyAdd(s, forward, position);
-
-        DirectX::XMFLOAT3 p; 
-
-        DirectX::XMStoreFloat3(&p, newPos);
-
-        m_transform->SetPosition(p);
+        m_transform->MoveForward(dt * 5.f, value);
     }
 
     void DirectXCamera::MoveXAxis(float dt, float value)
     {
-        DirectX::XMVECTOR right = m_transform->GetRightVector();
-        DirectX::XMVECTOR s = DirectX::XMVectorReplicate(dt * value);
-        DirectX::XMVECTOR position = m_transform->GetPosition();
-        DirectX::XMVECTOR newPos = DirectX::XMVectorMultiplyAdd(s, right, position);
+        m_transform->MoveRight(dt * 5.f, value);
+    }
 
-        DirectX::XMFLOAT3 p;
-
-        DirectX::XMStoreFloat3(&p, newPos);
-
-        m_transform->SetPosition(p);
+    void DirectXCamera::MoveYAxis(float dt, float value)
+    {
+        m_transform->MoveUp(dt * 5.f, value);
     }
 
     void DirectXCamera::Pitch(float dt, float value)
     {
-        m_transform->Rotate(0.f, dt * value , 0.f);
+        m_transform->RotateLocalX(dt * value);
+    }
+
+    void DirectXCamera::Roll(float dt, float value)
+    {
+        m_transform->RotateLocalZ(dt * value);
     }
 
     void DirectXCamera::Rotate(float dt, float value)
     {
-        m_transform->Rotate(dt * value, 0.f, 0.f);
+        m_transform->RotateWorldY(dt * value);
     }
 
 }
