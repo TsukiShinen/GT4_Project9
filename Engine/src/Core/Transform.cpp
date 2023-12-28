@@ -13,7 +13,7 @@ void Engine::Transform::SetRotation(DirectX::XMFLOAT3 rotation)
 	DirectX::XMStoreFloat4(&m_Quat,
 	                       DirectX::XMQuaternionRotationRollPitchYawFromVector(
 		                       DirectX::XMLoadFloat3(&rotation)));
-
+	UpdateRotation();
 	UpdateMatrix();
 }
 

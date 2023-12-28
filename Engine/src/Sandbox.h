@@ -25,10 +25,12 @@ private:
 
     std::unique_ptr<Engine::DirectXMesh> m_BingusMesh;
     std::unique_ptr<Engine::DirectXMesh> m_BunnyMesh;
+    std::unique_ptr<Engine::DirectXMesh> m_FaceMesh;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle1;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle2;
 
     std::unique_ptr<Engine::Object> m_BingusObject;
     std::unique_ptr<Engine::Object> m_BunnyObject;
     std::unique_ptr<Engine::Object> m_BunnyObject2;
+    std::unique_ptr<Engine::Object> m_Ground;
 };

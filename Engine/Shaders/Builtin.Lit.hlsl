@@ -86,77 +86,46 @@ float3 CalcDirectional(float3 position, Material material, float3 eyePosition, f
    return finalColor * material.diffuseColor.rgb;
 }*/
 
-float4 PS(VertexOut pin) : SV_Target
+float4 CalculateLighting(DirectionalLight light, VertexOut pin)
 {
-    float4 ambientColor = gAmbientLight;
     float4 diffuseColor = float4(0, 0, 0, 0);
     float4 specularColor = float4(0, 0, 0, 0);
 
-
-    float3 lightDir = -normalize(gDirectionalLights[0].Direction);
+    float3 lightDir = -normalize(light.Direction);
     float3 normal = normalize(pin.NormalW);
 
 
     float diffuseFactor = dot(normal, lightDir);
     if (diffuseFactor > 0)
     {
-         diffuseColor = float4(gDirectionalLights[0].Color * diffuseFactor, 1.0f);
+         diffuseColor = float4(light.Color * diffuseFactor, 1.0f);
 
          float3 vertexToEye = normalize(gEyePosW - pin.PosW);
-         float3 lightReflect = normalize(reflect(gDirectionalLights[0].Direction, normal));
+         float3 lightReflect = normalize(reflect(light.Direction, normal));
          
          float specularFactor = dot(vertexToEye, lightReflect);
 
          if (specularFactor > 0)
          {
             specularFactor = pow(specularFactor, gSpecularPower);
-            specularColor = float4(gDirectionalLights[0].Color, 1.0f) * gSpecular * specularFactor;
+            specularColor = float4(light.Color, 1.0f) * gSpecular * specularFactor;
          }
     }
 
-    return mainTexture.Sample(mainSample, pin.TexC) * gAlbedo * (ambientColor + diffuseColor + specularColor);
-    /*
-   float3 diffuse = gDirectionalLights[0].Color * saturate(diffuseFactor);
+    return diffuseColor + specularColor;
+}
 
-   float3 reflectVec = normalize(2 * diffuseFactor * normal - lightDir);
-   
-   float3 specular = pow(saturate(dot(reflectVec, )))
-
-   // Blinn specular
-   
-   float3 HalfWay = normalize(ToEye + lightDir);
-   float NDotH = saturate(dot(HalfWay, pin.NormalW));
-   finalColor += gDirectionalLights[0].Color * pow(NDotH, material.specExp) * material.gSpecular.rgb;
-   
-   return finalColor * material.diffuseColor.rgb;
-
-    /*
-// Interpolating normal can unnormalize it, so renormalize it.
-    pin.NormalW = normalize(pin.NormalW);
+float4 PS(VertexOut pin) : SV_Target
+{
+    float4 ambientColor = gAmbientLight;
+    float4 specularDiffuseColor = float4(0, 0, 0, 0);
     
-    // Vector from point being lit to eye. 
-    float3 toEyeW = normalize(gEyePosW - pin.PosW);
-    
-	// Indirect lighting.
-    float4 ambient = mainTexture.Sample(mainSample, pin.TexC) * gDiffuseAlbedo * gAmbientLight;
-    //float4 ambient = gAmbientLight*gDiffuseAlbedo;
+    int i = 0;
+    for(i = 0; i < gNumDirectionalLights; ++i)
+    {
+        specularDiffuseColor += CalculateLighting(gDirectionalLights[i], pin);
+    }
 
-    const float shininess = 1.0f - gRoughness;
-    Material mat = { gDiffuseAlbedo, gFresnelR0, shininess };
-    float3 shadowFactor = 1.0f;
-    
-    float4 directLight = ComputeLighting(gDirectionalLights, gNumDirectionalLights, mat, pin.PosW, 
-        pin.NormalW, toEyeW, shadowFactor);
-
-    //float4 directLight = float4(saturate(dot(-gDirectionalLights[0].Direction, pin.NormalW) * gDirectionalLights[0].Strength), 1.0f);
-
-    float4 litColor = ambient + directLight;
-
-    // Common convention to take alpha from diffuse material.
-    litColor.a = gDiffuseAlbedo.a;
-
-    return litColor;
-    */
-    //return float4(pin.NormalW, 1.0f);
+    return mainTexture.Sample(mainSample, pin.TexC) * gAlbedo * (ambientColor + specularDiffuseColor);
     
 }

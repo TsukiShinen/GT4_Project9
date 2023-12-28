@@ -17,10 +17,13 @@ namespace Engine
     {
 
     public:
+
         template <typename T, typename = std::enable_if_t<std::is_base_of_v<Vertex, T>>>
         DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices);
 
 		void Draw();
+
+		static std::unique_ptr<Engine::DirectXMesh> CreateFromFile(const char* file);
 
     private:
 		int m_NumFramesDirty = DirectXSwapchain::k_SwapChainBufferCount;

@@ -10,18 +10,6 @@
 #include "Renderer/Shaders/DirectXSimpleShader.h"
 #include "Renderer/Shaders/DirectXTextureShader.h"
 
-void CreateMeshFromFile(const char* file, std::unique_ptr<Engine::DirectXMesh>& mesh)
-{
-	std::vector<Engine::VertexLit> vertices;
-	Engine::ObjLoader::LoadObj(file, &vertices);
-	std::vector<uint16_t> indices;
-	for (size_t i = 0; i < vertices.size(); i++)
-	{
-		indices.push_back(i);
-	}
-	mesh = std::make_unique<Engine::DirectXMesh>(vertices, indices);
-}
-
 Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	: Application(pSpecification)
 {
@@ -46,8 +34,9 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	m_StoneMaterial2->SetTexture(stone);
 
 	// Init mesh
-	CreateMeshFromFile(".\\Objs\\bingus.obj", m_BingusMesh);
-	CreateMeshFromFile(".\\Objs\\bunnyex.obj", m_BunnyMesh);
+	m_BingusMesh = Engine::DirectXMesh::CreateFromFile(".\\Objs\\bingus.obj");
+	m_BunnyMesh = Engine::DirectXMesh::CreateFromFile(".\\Objs\\bunnyex.obj");
+	m_FaceMesh = Engine::DirectXMesh::CreateFromFile(".\\Objs\\face.obj");
 
 	std::vector vertices3{
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
@@ -71,7 +60,9 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	m_BingusObject->GetTransform()->SetScale(DirectX::XMFLOAT3(0.05f, 0.05f, 0.05f));
 	m_BunnyObject = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(2, 0, 0), m_BunnyMesh.get(), m_StoneMaterial.get());
 	m_BunnyObject2 = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(-2, 0, 0), m_BunnyMesh.get(), m_StoneMaterial2.get());
-
+	m_Ground = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(0, -0.4f, 0), m_FaceMesh.get(), m_StoneMaterial.get());
+	m_Ground->GetTransform()->SetRotation(DirectX::XMFLOAT3(0, 0.0f, -DirectX::XMConvertToRadians(90)));
+	m_Ground->GetTransform()->SetScale(DirectX::XMFLOAT3(10, 10, 10));
 }
 
 void Sandbox::Update(const Engine::Timestep pDeltaTime)
@@ -81,7 +72,6 @@ void Sandbox::Update(const Engine::Timestep pDeltaTime)
 	m_BingusObject->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
 	m_BunnyObject->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
 	m_BunnyObject2->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
-
 }
 
 void Sandbox::Draw()
@@ -91,6 +81,7 @@ void Sandbox::Draw()
 	m_BingusObject->Render();
 	m_BunnyObject->Render();
 	m_BunnyObject2->Render();
+	m_Ground->Render();
 }
 
 void Sandbox::OnEvent(Engine::Event& pEvent)
