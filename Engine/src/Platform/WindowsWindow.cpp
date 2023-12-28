@@ -242,25 +242,23 @@ namespace Engine
 			}
 			break;
 		case WM_LBUTTONUP:
-		case WM_MBUTTONUP:
-		case WM_RBUTTONUP:
 			{
-				MouseButtonReleasedEvent event(static_cast<MouseCode>(pWParam));
+				MouseButtonReleasedEvent event(1);
 				m_Data.EventCallback(event);
-				Input::s_MouseButtons[static_cast<MouseCode>(pWParam)] = false;
+				Input::s_MouseButtons[1] = false;
 			}
 			break;
 		case WM_MOUSEWHEEL:
 			{
 				MouseScrolledEvent event(static_cast<float>(GET_X_LPARAM(pLParam)),
-				                         static_cast<float>(GET_X_LPARAM(pLParam)));
+				                         static_cast<float>(GET_Y_LPARAM(pLParam)));
 				m_Data.EventCallback(event);
 			}
 			break;
 		case WM_MOUSEMOVE:
 			{
 				MouseMovedEvent event(static_cast<float>(GET_X_LPARAM(pLParam)),
-				                      static_cast<float>(GET_X_LPARAM(pLParam)));
+				                      static_cast<float>(GET_Y_LPARAM(pLParam)));
 				m_Data.EventCallback(event);
 				Input::s_MousePositionX = event.GetX();
 				Input::s_MousePositionY = event.GetY();

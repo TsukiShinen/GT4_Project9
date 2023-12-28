@@ -53,24 +53,12 @@ namespace Engine
         if (Input::IsKeyPressed(Engine::Key::D)) {
             MoveXAxis(dt, 1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::R)) {
+        if (Input::IsKeyPressed(Engine::Key::A)) {
             MoveYAxis(dt, 1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::F)) {
+        if (Input::IsKeyPressed(Engine::Key::E)) {
             MoveYAxis(dt, -1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::A)) {
-            Rotate(dt, -1.f);
-        }
-        if (Input::IsKeyPressed(Engine::Key::E)) {
-            Rotate(dt, 1.f);
-        }
-        if (Input::IsKeyPressed(Engine::Key::G)) {
-            Pitch(dt, 1.f);
-        }
-        if (Input::IsKeyPressed(Engine::Key::T)) {
-            Pitch(dt, -1.f);
-        }        
     }
 
     void DirectXCamera::MoveZAxis(float dt, float value)
@@ -103,4 +91,15 @@ namespace Engine
         m_Transform->RotateWorldY(dt * value);
     }
 
+    void DirectXCamera::MouseMove(float x, float y)
+    {
+        if (Input::IsMouseButtonPressed(Engine::Mouse::Button1)) {
+            float dx = DirectX::XMConvertToRadians(0.25f * (x - m_LastMousePos.x));
+            float dy = DirectX::XMConvertToRadians(0.25f * (y - m_LastMousePos.y));
+
+            m_Transform->RotateWorldY(dx);
+            m_Transform->RotateLocalX(-dy);
+        }
+        m_LastMousePos = { x,y };
+    }
 }

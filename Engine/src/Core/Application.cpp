@@ -3,6 +3,7 @@
 #include "Timestep.h"
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
+#include "Events/MouseEvent.h"
 #include "Renderer/DirectXApi.h"
 #include "Core/ObjLoader.h"
 #include "Renderer/Resource/DirectXResourceManager.h"
@@ -18,6 +19,8 @@
 #include "Renderer/Materials/DirectXLitMaterial.h"
 
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
+
+class Engine::DirectXCamera;
 
 Application* Application::s_Instance = nullptr;
 
@@ -90,6 +93,7 @@ Application::~Application()
 
 void Application::Run()
 {
+
 	while (m_IsRunning)
 	{
 		if (!m_IsMinimized)
@@ -120,6 +124,10 @@ void Application::OnEvent(Engine::Event& pEvent)
 	Engine::EventDispatcher dispatcher(pEvent);
 	dispatcher.Dispatch<Engine::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 	dispatcher.Dispatch<Engine::WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
+	dispatcher.Dispatch<Engine::MouseMovedEvent>([](Engine::MouseMovedEvent& pEvent) {
+		Engine::DirectXApi::CameraMouseEvent(pEvent.GetX(), pEvent.GetY());
+		return true;
+		});
 }
 
 bool Application::OnWindowClose(Engine::WindowCloseEvent& pEvent)
