@@ -9,7 +9,7 @@
 
 namespace Engine
 {
-    class DirectXShader;
+    class DirectXMaterial;
 
     struct ObjectConstants
     {
@@ -20,7 +20,7 @@ namespace Engine
     {
     public:
         template <typename T, typename = std::enable_if_t<std::is_base_of_v<Vertex, T>>>
-        DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, std::shared_ptr<DirectXShader> pShader);
+        DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, DirectXMaterial* pMaterial);
 
         void Draw();
 
@@ -48,7 +48,7 @@ namespace Engine
         D3D12_INDEX_BUFFER_VIEW m_IndexBuffer;
         UINT m_IndexCount = 0;
 
-        std::shared_ptr<DirectXShader> m_Shader;
+        DirectXMaterial* m_Material;
         
         std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
 
@@ -56,9 +56,8 @@ namespace Engine
     };
 
     template <typename T, typename>
-    DirectXMesh::DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices,
-        std::shared_ptr<DirectXShader> pShader)
-            : m_IndexCount(pIndices.size()), m_Shader(pShader)
+    DirectXMesh::DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, DirectXMaterial* pMaterial)
+            : m_IndexCount(pIndices.size()), m_Material(pMaterial)
     {
         // ===== Constant Buffer =====
         m_ConstantBuffer = std::make_unique<UploadBuffer<ObjectConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);

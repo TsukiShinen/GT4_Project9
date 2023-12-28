@@ -13,8 +13,15 @@ namespace Engine
     class DirectXCommandObject;
     class DirectXSwapchain;
     class DirectXShader;
+    class DirectXMaterial;
+    class DirectXSimpleMaterial;
+    class DirectXTextureMaterial;
+    class DirectXLitMaterial;
+
     class DirectXSimpleShader;
     class DirectXTextureShader;
+    class DirectXLitShader;
+
     class DirectXCamera;
     class DirectXResourceManager;
 
@@ -24,9 +31,10 @@ namespace Engine
         
         static void Initialize();
         static void Shutdown();
-
+        /*
         std::shared_ptr<DirectXShader> GetBaseShader() const;
         std::shared_ptr<DirectXShader> GetTextureShader() const;
+        */
         DirectXResourceManager& GetResourceManager() const { return *m_ResourceManager; }
 
         static void LogErrorIfFailed(const HRESULT pHr, const char* pFile, int pLine)
@@ -59,8 +67,12 @@ namespace Engine
 
         std::unique_ptr<DirectXCommandObject> m_CommandObject;
 
+        std::unique_ptr<DirectXMaterial> m_BaseMaterial; // TODO : Move this in mesh
+        /*
         std::shared_ptr<DirectXSimpleShader> m_BaseShader;
         std::shared_ptr<DirectXTextureShader> m_TextureShader;
+        std::shared_ptr<DirectXLitShader> m_LitShader;
+        */
         std::unique_ptr<DirectXResourceManager> m_ResourceManager;
         
         UINT m_CbvSrvUavDescriptorSize = 0;
@@ -77,6 +89,8 @@ namespace Engine
         // Camera
         std::unique_ptr<DirectXCamera> m_Camera;
 
+
+
     private:
         static DirectXContext* s_Instance;
 
@@ -86,7 +100,12 @@ namespace Engine
         friend class DirectXShader;
         friend class DirectXSimpleShader;
         friend class DirectXTextureShader;
+        friend class DirectXLitShader;
         friend class DirectXMesh;
+        friend class DirectXMaterial;
+        friend class DirectXSimpleMaterial;
+        friend class DirectXTextureMaterial;
+        friend class DirectXLitMaterial;
         friend class DirectXResourceManager;
     };
 
