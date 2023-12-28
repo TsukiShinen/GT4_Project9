@@ -56,9 +56,28 @@ VertexOut VS(VertexIn vin)
     
     return vout;
 }
+/*
+float3 CalcDirectional(float3 position, Material material, float3 eyePosition, float3 lightDir)
+{
+   // Phong diffuse
+   float NDotL = dot(lightDir, material.normal);
+   float3 finalColor = DirLightColor.rgb * saturate(NDotL);
+   
+   // Blinn specular
+   float3 ToEye = eyePosition.xyz - position;
+   ToEye = normalize(ToEye);
+   float3 HalfWay = normalize(ToEye + lightDir);
+   float NDotH = saturate(dot(HalfWay, material.normal));
+   finalColor += DirLightColor.rgb * pow(NDotH, material.specExp) * material.specIntensity;
+   
+   return finalColor * material.diffuseColor.rgb;
+}*/
 
 float4 PS(VertexOut pin) : SV_Target
-{
+{/*
+    Material mat = { gDiffuseAlbedo, gFresnelR0, shininess };
+    CalcDirectional(pin.PosW, mat, gEyePosW, gDirectionalLights[0].Direction);*/
+
 
 // Interpolating normal can unnormalize it, so renormalize it.
     pin.NormalW = normalize(pin.NormalW);

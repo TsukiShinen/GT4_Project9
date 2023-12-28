@@ -101,7 +101,7 @@ namespace Engine
 		{
 			DirectX::XMFLOAT3 vertex = vertices[face_vertex_index[i] - 1];
 			DirectX::XMFLOAT2 uv = uvs[face_uv_index[i] - 1];
-			DirectX::XMFLOAT3 normal = vertices[face_normal_index[i] - 1];
+			DirectX::XMFLOAT3 normal = normals[face_normal_index[i] - 1];
 
 			objVertices->push_back({ vertex, uv, normal });
 		}
