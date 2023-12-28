@@ -76,6 +76,9 @@ namespace Engine
             DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize,
             m_IndexBufferUploader);
 
+        DirectXContext::Get()->m_CommandObject->Execute();
+        DirectXContext::Get()->m_CommandObject->Flush();
+
         m_VertexBuffer.BufferLocation = m_VertexBufferGpu->GetGPUVirtualAddress();
         m_VertexBuffer.StrideInBytes = sizeof(T);
         m_VertexBuffer.SizeInBytes = verticesByteSize;
@@ -83,9 +86,6 @@ namespace Engine
         m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
         m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
         m_IndexBuffer.SizeInBytes = indicesByteSize;
-
-        DirectXContext::Get()->m_CommandObject->Execute();
-        DirectXContext::Get()->m_CommandObject->Flush();
         
         m_VertexBufferUploader->Release();
         m_IndexBufferUploader->Release();
