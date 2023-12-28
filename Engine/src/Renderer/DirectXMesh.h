@@ -24,6 +24,8 @@ namespace Engine
 
         void Draw();
 
+        void SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix);
+
         [[nodiscard]] UploadBuffer<ObjectConstants>& GetConstantBuffer() const { return *m_ConstantBuffer; }
         [[nodiscard]] Texture* GetTexture() { return m_Texture; }
         void SetTexture(Texture* pTexture) { m_Texture = pTexture; }

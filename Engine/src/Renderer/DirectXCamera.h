@@ -15,24 +15,29 @@ namespace Engine
 		DirectXCamera(float width, float height, float fovDegree = 45.0f, float nearZ = 0.1f, float farZ = 1000.0f);
 		~DirectXCamera();
 
+		/// <summary>
+		/// Resizes the camera's projection matrix.
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
 		void Resize(float width, float height);
 
+		/// <summary>
+		/// Updates the camera view.
+		/// </summary>
 		void Update();
 
+		/// <summary>
+		/// Game updates.
+		/// </summary>
+		/// <param name="dt"> : delta time</param>
 		void GameUpdate(float dt);
 
-		void MoveZAxis(float dt, float value);
-
-		void MoveXAxis(float dt, float value);
-
-		void MoveYAxis(float dt, float value);
-
-		void Pitch(float dt, float value);
-
-		void Roll(float dt, float value);
-
-		void Rotate(float dt, float value);
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
 		void MouseMove(float x, float y); 	
 
 	private:

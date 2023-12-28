@@ -42,53 +42,23 @@ namespace Engine
     void DirectXCamera::GameUpdate(float dt)
     {
         if (Input::IsKeyPressed(Engine::Key::Z)) {
-            MoveZAxis(dt, 1.f);
+            m_Transform->MoveForward(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::S)) {
-            MoveZAxis(dt, -1.f);
+            m_Transform->MoveForward(dt * 5.f, -1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::Q)) {
-            MoveXAxis(dt, -1.f);
+            m_Transform->MoveRight(dt * 5.f, -1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::D)) {
-            MoveXAxis(dt, 1.f);
+            m_Transform->MoveRight(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::A)) {
-            MoveYAxis(dt, 1.f);
+            m_Transform->MoveUp(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::E)) {
-            MoveYAxis(dt, -1.f);
+            m_Transform->MoveUp(dt * 5.f, -1.f);
         }
-    }
-
-    void DirectXCamera::MoveZAxis(float dt, float value)
-    {
-        m_Transform->MoveForward(dt * 5.f, value);
-    }
-
-    void DirectXCamera::MoveXAxis(float dt, float value)
-    {
-        m_Transform->MoveRight(dt * 5.f, value);
-    }
-
-    void DirectXCamera::MoveYAxis(float dt, float value)
-    {
-        m_Transform->MoveUp(dt * 5.f, value);
-    }
-
-    void DirectXCamera::Pitch(float dt, float value)
-    {
-        m_Transform->RotateLocalX(dt * value);
-    }
-
-    void DirectXCamera::Roll(float dt, float value)
-    {
-        m_Transform->RotateLocalZ(dt * value);
-    }
-
-    void DirectXCamera::Rotate(float dt, float value)
-    {
-        m_Transform->RotateWorldY(dt * value);
     }
 
     void DirectXCamera::MouseMove(float x, float y)
