@@ -6,14 +6,14 @@
 
 namespace Engine
 {
-    struct Texture
-    {
-        std::string Name;
-        INT HeapIndex;
+	struct Texture
+	{
+		std::string Name;
+		INT HeapIndex;
 
-        std::wstring Filename;
+		std::wstring Filename;
 
-        Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
-        Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
-    };
+		Microsoft::WRL::ComPtr<ID3D12Resource> Resource = nullptr;
+		Microsoft::WRL::ComPtr<ID3D12Resource> UploadHeap = nullptr;
+	};
 }

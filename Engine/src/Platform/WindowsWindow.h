@@ -15,12 +15,12 @@ namespace Engine
 		uint32_t Width = 1600;
 		uint32_t Height = 900;
 	};
-	
+
 	class WindowsWindow
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
-		
+
 		WindowsWindow(const WindowProps& pWindowProps);
 		~WindowsWindow();
 

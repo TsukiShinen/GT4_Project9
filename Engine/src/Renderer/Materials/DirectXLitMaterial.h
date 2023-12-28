@@ -9,8 +9,8 @@ namespace Engine
 {
 	struct LitMaterialConstants
 	{
-		alignas(16) DirectX::XMFLOAT4 Albedo = { 1.f, 1.f, 1.f, 1.f };
-		alignas(16) DirectX::XMFLOAT4 Specular = { 0.1f, 0.1f, 0.1f, 1.f };
+		alignas(16) DirectX::XMFLOAT4 Albedo = {1.f, 1.f, 1.f, 1.f};
+		alignas(16) DirectX::XMFLOAT4 Specular = {0.1f, 0.1f, 0.1f, 1.f};
 		alignas(16) float SpecularPower = 100.0f;
 
 		LitMaterialConstants()
@@ -27,7 +27,8 @@ namespace Engine
 	{
 	public:
 		DirectXLitMaterial(DirectXLitShader* shader);
-		DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo, DirectX::XMFLOAT4 specular, float smoothness, Texture* texture = nullptr);
+		DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo, DirectX::XMFLOAT4 specular,
+		                   float smoothness, Texture* texture = nullptr);
 
 		void Bind(DirectXMesh* mesh) override;
 		void SetTexture(Texture* texture);

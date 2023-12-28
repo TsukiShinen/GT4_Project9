@@ -6,30 +6,31 @@
 
 namespace Engine
 {
-    void DirectXMesh::Draw()
-    {
-        if(true) // m_NumFramesDirty > 0
-        {
-            const DirectX::XMMATRIX world = XMLoadFloat4x4(&m_TransformMatrix);
+	void DirectXMesh::Draw()
+	{
+		if (true) // m_NumFramesDirty > 0
+		{
+			const DirectX::XMMATRIX world = XMLoadFloat4x4(&m_TransformMatrix);
 
-            ObjectConstants objConstants;
-            XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
+			ObjectConstants objConstants;
+			XMStoreFloat4x4(&objConstants.World, XMMatrixTranspose(world));
 
-            m_ConstantBuffer->CopyData(0, objConstants);
+			m_ConstantBuffer->CopyData(0, objConstants);
 
-            m_NumFramesDirty--;
-        }
+			m_NumFramesDirty--;
+		}
 
-        m_Material->Bind(this);
-        
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveType);
-        
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->DrawIndexedInstanced(m_IndexCount, 1, 0, 0, 0);
-    }
-    void DirectXMesh::SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix)
-    {
-        m_TransformMatrix = transformMatrix;
-    }
+		m_Material->Bind(this);
+
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveType);
+
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->DrawIndexedInstanced(m_IndexCount, 1, 0, 0, 0);
+	}
+
+	void DirectXMesh::SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix)
+	{
+		m_TransformMatrix = transformMatrix;
+	}
 }

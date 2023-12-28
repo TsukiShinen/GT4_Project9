@@ -26,34 +26,40 @@ Application* Application::s_Instance = nullptr;
 
 Application::Application(const ApplicationSpecification& pSpecification)
 {
-    assert(!s_Instance, "Application already exist!");
-    s_Instance = this;
+	assert(!s_Instance, "Application already exist!");
+	s_Instance = this;
 	m_Window = nullptr;
 
-    // === Window ===
-    m_Window = new Engine::WindowsWindow(Engine::WindowProps(pSpecification.Name, 1280, 700));
-    m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+	// === Window ===
+	m_Window = new Engine::WindowsWindow(Engine::WindowProps(pSpecification.Name, 1280, 700));
+	m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 	Engine::DirectXApi::Initialize();
-	
+
 	// Shaders
-	s_Instance->m_SimpleShader = std::make_unique<Engine::DirectXSimpleShader>(Engine::VertexColor::GetLayout(), L"Shaders\\Builtin.Color.hlsl");
-	s_Instance->m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
-	s_Instance->m_LitShader = std::make_unique<Engine::DirectXLitShader>(Engine::VertexLit::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
+	s_Instance->m_SimpleShader = std::make_unique<Engine::DirectXSimpleShader>(
+		Engine::VertexColor::GetLayout(), L"Shaders\\Builtin.Color.hlsl");
+	s_Instance->m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(
+		Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
+	s_Instance->m_LitShader = std::make_unique<Engine::DirectXLitShader>(
+		Engine::VertexLit::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
 
 	// Texture
-	Engine::Texture* stone = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
-	Engine::Texture* bingus = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\bingus.dds", "Bingus");
+	Engine::Texture* stone = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(
+		L"Textures\\stone.dds", "Stone");
+	Engine::Texture* bingus = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(
+		L"Textures\\bingus.dds", "Bingus");
 
 	// Materials
 	s_Instance->m_SimpleMaterial = std::make_unique<Engine::DirectXSimpleMaterial>(s_Instance->m_SimpleShader.get());
-	s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(s_Instance->m_TextureShader.get(), stone);
+	s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(
+		s_Instance->m_TextureShader.get(), stone);
 	s_Instance->m_LitMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
 	s_Instance->m_BingusMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
 	s_Instance->m_BingusMaterial->SetTexture(bingus);
 
 	// Init objects
-	
+
 	std::vector<Engine::VertexLit> vertices;
 	Engine::ObjLoader::LoadObj(".\\Objs\\bingus.obj", &vertices);
 	std::vector<uint16_t> indices;
@@ -61,26 +67,29 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	{
 		indices.push_back(i);
 	}
-	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices, (Engine::DirectXMaterial*)s_Instance->m_BingusMaterial.get());
-	
-	
-	std::vector vertices3 {
+	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices,
+	                                               (Engine::DirectXMaterial*)s_Instance->m_BingusMaterial.get());
+
+
+	std::vector vertices3{
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
 		Engine::VertexTex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT2(0, 1)},
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 0)},
 	};
-	std::vector<uint16_t> indices3 = { 0, 1, 2};
-	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3, (Engine::DirectXMaterial*)s_Instance->m_TextureMaterial.get());
-	
-	
+	std::vector<uint16_t> indices3 = {0, 1, 2};
+	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3,
+	                                                    (Engine::DirectXMaterial*)s_Instance->m_TextureMaterial.get());
+
+
 	std::vector vertices2 = {
 		Engine::VertexColor{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
 		Engine::VertexColor{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 1, 0, 1)},
 		Engine::VertexColor{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)},
 	};
-	std::vector<uint16_t> indices2 = { 0, 1, 2 };
-	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2, (Engine::DirectXMaterial*)s_Instance->m_SimpleMaterial.get());
-	
+	std::vector<uint16_t> indices2 = {0, 1, 2};
+	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2,
+	                                                    (Engine::DirectXMaterial*)s_Instance->m_SimpleMaterial.get());
+
 	__int64 countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
 	m_SecondsPerCount = 1.0 / static_cast<double>(countsPerSec);
@@ -98,7 +107,6 @@ Application::~Application()
 
 void Application::Run()
 {
-
 	while (m_IsRunning)
 	{
 		if (!m_IsMinimized)
@@ -112,11 +120,11 @@ void Application::Run()
 			GameUpdate(deltaTime.GetSeconds());
 
 			Engine::DirectXApi::BeginFrame();
-			
+
 			//m_Triangle1->Draw();
 			//m_Triangle2->Draw();
 			m_Cube->Draw();
-			
+
 			Engine::DirectXApi::EndFrame();
 		}
 
@@ -129,10 +137,11 @@ void Application::OnEvent(Engine::Event& pEvent)
 	Engine::EventDispatcher dispatcher(pEvent);
 	dispatcher.Dispatch<Engine::WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 	dispatcher.Dispatch<Engine::WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
-	dispatcher.Dispatch<Engine::MouseMovedEvent>([](Engine::MouseMovedEvent& pEvent) {
+	dispatcher.Dispatch<Engine::MouseMovedEvent>([](Engine::MouseMovedEvent& pEvent)
+	{
 		Engine::DirectXApi::CameraMouseEvent(pEvent.GetX(), pEvent.GetY());
 		return true;
-		});
+	});
 }
 
 bool Application::OnWindowClose(Engine::WindowCloseEvent& pEvent)

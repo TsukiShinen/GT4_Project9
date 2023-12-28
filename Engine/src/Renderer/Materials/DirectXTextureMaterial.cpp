@@ -19,6 +19,7 @@ namespace Engine
 	void Engine::DirectXTextureMaterial::Bind(DirectXMesh* mesh)
 	{
 		m_Shader->Bind(mesh);
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(0, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
+		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(
+			0, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
 	}
 }

@@ -10,7 +10,6 @@ namespace Engine
 {
 	class DirectXCamera
 	{
-
 	public:
 		DirectXCamera(float width, float height, float fovDegree = 45.0f, float nearZ = 0.1f, float farZ = 1000.0f);
 		~DirectXCamera();
@@ -38,7 +37,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-		void MouseMove(float x, float y); 	
+		void MouseMove(float x, float y);
 
 	private:
 		std::unique_ptr<Transform> m_Transform;
@@ -53,10 +52,8 @@ namespace Engine
 		DirectX::XMFLOAT4X4 m_ViewProj = MathHelper::Identity4x4();
 		DirectX::XMFLOAT4X4 m_ViewProjT = MathHelper::Identity4x4();
 
-		DirectX::XMFLOAT2 m_LastMousePos = { 0.f,0.f };
+		DirectX::XMFLOAT2 m_LastMousePos = {0.f, 0.f};
 
 		friend class DirectXApi;
 	};
 }
-
-

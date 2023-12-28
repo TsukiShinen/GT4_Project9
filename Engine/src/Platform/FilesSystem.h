@@ -14,7 +14,7 @@ namespace Engine
 		FileModeRead = 0x1,
 		FileModeWrite = 0x2
 	};
-	
+
 	class FilesSystem
 	{
 	public:
@@ -24,7 +24,7 @@ namespace Engine
 		 * \return True if exist; otherwise false.
 		 */
 		static bool Exist(const char* pPath);
-		
+
 		/**
 		 * \brief Attempt to open file located at path.
 		 * \param pPath The path of the file to be checked.
@@ -88,5 +88,4 @@ namespace Engine
 		 */
 		static bool TryWrite(const File* pFile, uint64_t pDataSize, const void* pData, uint64_t* pOutBytesWritten);
 	};
-	
 }
