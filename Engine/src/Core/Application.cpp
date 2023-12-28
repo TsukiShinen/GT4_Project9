@@ -35,13 +35,13 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	
 	// Shaders
 	s_Instance->m_SimpleShader = std::make_unique<Engine::DirectXSimpleShader>(Engine::VertexColor::GetLayout(), L"Shaders\\Builtin.Color.hlsl");
-	//s_Instance->m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
+	s_Instance->m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
 	s_Instance->m_LitShader = std::make_unique<Engine::DirectXLitShader>(Engine::VertexLit::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
 
 	// Materials
 	s_Instance->m_SimpleMaterial = std::make_unique<Engine::DirectXSimpleMaterial>(s_Instance->m_SimpleShader.get());
-	//Engine::Texture tex = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
-	//s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(s_Instance->m_TextureShader.get(), tex);
+	Engine::Texture* tex = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
+	s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(s_Instance->m_TextureShader.get(), tex);
 	s_Instance->m_LitMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
 
 	// Init objects
@@ -55,7 +55,7 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	}
 	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices, (Engine::DirectXMaterial*)s_Instance->m_LitMaterial.get());
 	
-	/*
+	
 	std::vector vertices3 {
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
 		Engine::VertexTex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT2(0, 1)},
@@ -63,7 +63,7 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	};
 	std::vector<uint16_t> indices3 = { 0, 1, 2};
 	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3, (Engine::DirectXMaterial*)s_Instance->m_TextureMaterial.get());
-	*/
+	
 	
 	std::vector vertices2 = {
 		Engine::VertexColor{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
@@ -104,7 +104,7 @@ void Application::Run()
 
 			Engine::DirectXApi::BeginFrame();
 			
-			//m_Triangle1->Draw();
+			m_Triangle1->Draw();
 			m_Triangle2->Draw();
 			m_Cube->Draw();
 			

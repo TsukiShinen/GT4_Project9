@@ -12,12 +12,12 @@ namespace Engine
 	{
 	public:
 		DirectXTextureMaterial(DirectXTextureShader* shader);
-		DirectXTextureMaterial(DirectXTextureShader* shader, Texture& texture);
+		DirectXTextureMaterial(DirectXTextureShader* shader, Texture* texture);
 
 		void Bind(DirectXMesh* mesh) override;
 
 	protected:
-		Texture m_Texture;
+		Texture* m_Texture;
 	};
 }
 

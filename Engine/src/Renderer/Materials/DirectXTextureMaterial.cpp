@@ -11,7 +11,7 @@ namespace Engine
 	{
 	}
 
-	Engine::DirectXTextureMaterial::DirectXTextureMaterial(DirectXTextureShader* shader, Texture& texture)
+	Engine::DirectXTextureMaterial::DirectXTextureMaterial(DirectXTextureShader* shader, Texture* texture)
 		: DirectXMaterial((DirectXShader*)shader), m_Texture(texture)
 	{
 	}
