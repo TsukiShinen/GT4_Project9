@@ -93,6 +93,11 @@ namespace Engine
         DirectXContext::Get()->m_Camera->GameUpdate(dt);
     }
 
+    void DirectXApi::CameraMouseEvent(float x, float y)
+    {
+        DirectXContext::Get()->m_Camera->MouseMove(x,y);
+    }
+
     void DirectXApi::InitializeDebug()
     {
 #if defined(DEBUG) || defined(_DEBUG)

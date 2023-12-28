@@ -114,6 +114,9 @@ namespace Engine {
 		/// <returns>The tranform's world matrix.</returns>
 		DirectX::XMMATRIX GetWorld() const;
 
+		/// <returns>The tranform's world matrix as XMFLOAT4X4</returns>
+		DirectX::XMFLOAT4X4 GetWorldAsFloat4x4() const;
+
 		/// <returns>The tranform's Up vector.</returns>
 		DirectX::XMVECTOR GetUpVector() const;
 

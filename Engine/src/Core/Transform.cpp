@@ -203,3 +203,8 @@ DirectX::XMMATRIX Engine::Transform::GetWorld() const
 {
 	return DirectX::XMLoadFloat4x4(&m_World);
 }
+
+DirectX::XMFLOAT4X4 Engine::Transform::GetWorldAsFloat4x4() const
+{
+	return m_World;
+}

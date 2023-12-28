@@ -16,6 +16,7 @@ namespace Engine
         static void EndFrame();
 
         static void UpdateCamera(float dt);
+        static void CameraMouseEvent(float x, float y);
 
     private:
         static void InitializeDebug();

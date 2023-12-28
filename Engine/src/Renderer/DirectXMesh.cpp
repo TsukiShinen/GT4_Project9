@@ -8,7 +8,7 @@ namespace Engine
 {
     void DirectXMesh::Draw()
     {
-        if(m_NumFramesDirty > 0)
+        if(true) // m_NumFramesDirty > 0
         {
             const DirectX::XMMATRIX world = XMLoadFloat4x4(&m_TransformMatrix);
 
@@ -27,5 +27,9 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetPrimitiveTopology(m_PrimitiveType);
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->DrawIndexedInstanced(m_IndexCount, 1, 0, 0, 0);
+    }
+    void DirectXMesh::SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix)
+    {
+        m_TransformMatrix = transformMatrix;
     }
 }

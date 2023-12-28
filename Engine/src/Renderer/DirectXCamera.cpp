@@ -42,65 +42,34 @@ namespace Engine
     void DirectXCamera::GameUpdate(float dt)
     {
         if (Input::IsKeyPressed(Engine::Key::Z)) {
-            MoveZAxis(dt, 1.f);
+            m_Transform->MoveForward(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::S)) {
-            MoveZAxis(dt, -1.f);
+            m_Transform->MoveForward(dt * 5.f, -1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::Q)) {
-            MoveXAxis(dt, -1.f);
+            m_Transform->MoveRight(dt * 5.f, -1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::D)) {
-            MoveXAxis(dt, 1.f);
-        }
-        if (Input::IsKeyPressed(Engine::Key::R)) {
-            MoveYAxis(dt, 1.f);
-        }
-        if (Input::IsKeyPressed(Engine::Key::F)) {
-            MoveYAxis(dt, -1.f);
+            m_Transform->MoveRight(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::A)) {
-            Rotate(dt, -1.f);
+            m_Transform->MoveUp(dt * 5.f, 1.f);
         }
         if (Input::IsKeyPressed(Engine::Key::E)) {
-            Rotate(dt, 1.f);
+            m_Transform->MoveUp(dt * 5.f, -1.f);
         }
-        if (Input::IsKeyPressed(Engine::Key::G)) {
-            Pitch(dt, 1.f);
+    }
+
+    void DirectXCamera::MouseMove(float x, float y)
+    {
+        if (Input::IsMouseButtonPressed(Engine::Mouse::Button1)) {
+            float dx = DirectX::XMConvertToRadians(0.25f * (x - m_LastMousePos.x));
+            float dy = DirectX::XMConvertToRadians(0.25f * (y - m_LastMousePos.y));
+
+            m_Transform->RotateWorldY(dx);
+            m_Transform->RotateLocalX(-dy);
         }
-        if (Input::IsKeyPressed(Engine::Key::T)) {
-            Pitch(dt, -1.f);
-        }        
+        m_LastMousePos = { x,y };
     }
-
-    void DirectXCamera::MoveZAxis(float dt, float value)
-    {
-        m_Transform->MoveForward(dt * 5.f, value);
-    }
-
-    void DirectXCamera::MoveXAxis(float dt, float value)
-    {
-        m_Transform->MoveRight(dt * 5.f, value);
-    }
-
-    void DirectXCamera::MoveYAxis(float dt, float value)
-    {
-        m_Transform->MoveUp(dt * 5.f, value);
-    }
-
-    void DirectXCamera::Pitch(float dt, float value)
-    {
-        m_Transform->RotateLocalX(dt * value);
-    }
-
-    void DirectXCamera::Roll(float dt, float value)
-    {
-        m_Transform->RotateLocalZ(dt * value);
-    }
-
-    void DirectXCamera::Rotate(float dt, float value)
-    {
-        m_Transform->RotateWorldY(dt * value);
-    }
-
 }
