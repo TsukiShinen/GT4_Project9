@@ -25,8 +25,8 @@ namespace Engine
         void Draw();
 
         [[nodiscard]] UploadBuffer<ObjectConstants>& GetConstantBuffer() const { return *m_ConstantBuffer; }
-        [[nodiscard]] Texture& GetTexture() { return m_Texture; }
-        void SetTexture(const Texture& pTexture) { m_Texture = pTexture; }
+        [[nodiscard]] Texture* GetTexture() { return m_Texture; }
+        void SetTexture(Texture* pTexture) { m_Texture = pTexture; }
 
     private:
         DirectX::XMFLOAT4X4 m_TransformMatrix = MathHelper::Identity4x4();
@@ -52,7 +52,7 @@ namespace Engine
         
         std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
 
-        Texture m_Texture;
+        Texture* m_Texture;
     };
 
     template <typename T, typename>
