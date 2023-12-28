@@ -3,10 +3,10 @@
 #include <iostream>
 
 #include "DirectXCommandObject.h"
-#include "DirectXShader.h"
 #include "DirectXCamera.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
+#include "Resource/DirectXResourceManager.h"
 
 namespace Engine
 {
@@ -45,9 +45,11 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ResourceBarrier(1, &barrier);
 
         // Clear the back buffer and depth buffer.
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Black, 0, nullptr);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Gray, 0, nullptr);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearDepthStencilView(DirectXContext::Get()->m_Swapchain->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
+        DirectXContext::Get()->m_ResourceManager->BindDescriptorsHeap();
+        
         const auto renderTargetDescriptor = DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView();
         const auto depthStencilDescriptor = DirectXContext::Get()->m_Swapchain->GetDepthStencilView();
         DirectXContext::Get()->m_CommandObject->GetCommandList()->OMSetRenderTargets(1,
@@ -56,12 +58,8 @@ namespace Engine
 
         DirectXContext::Get()->m_Camera->Update();
 
-        DirectXContext::Get()->m_BaseShader->Begin();
-
         const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
         currPassCb->CopyData(0, DirectXContext::Get()->m_Camera->m_MainPassCB);
-        
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }
 
     void DirectXApi::EndFrame()

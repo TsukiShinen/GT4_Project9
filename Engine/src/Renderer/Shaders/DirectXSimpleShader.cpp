@@ -1,15 +1,15 @@
-﻿#include "DirectXShader.h"
+﻿#include "DirectXSimpleShader.h"
 
 #include <comdef.h>
 
-#include "DirectXSwapchain.h"
-#include "DirectXCommandObject.h"
+#include "../DirectXSwapchain.h"
+#include "../DirectXCommandObject.h"
 #include "Debug/Log.h"
 
 namespace Engine
 {
 
-    DirectXShader::DirectXShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
+    DirectXSimpleShader::DirectXSimpleShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
     {
         const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
         const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
@@ -19,11 +19,19 @@ namespace Engine
         InitializePipelineState(pLayout, vsByteCode, psByteCode);
     }
 
-    DirectXShader::~DirectXShader()
+    void DirectXSimpleShader::Bind(DirectXMesh* pMesh)
     {
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
+        
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
+
+        auto t = pMesh->GetConstantBuffer().Resource();
+        auto r = pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress();
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(0, pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress());
     }
 
-    void DirectXShader::InitializeSignature()
+    void DirectXSimpleShader::InitializeSignature()
     {
         CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
@@ -51,7 +59,7 @@ namespace Engine
             IID_PPV_ARGS(&m_RootSignature)));
     }
     
-    void DirectXShader::InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout, Microsoft::WRL::ComPtr<ID3DBlob> pVsByteCode, Microsoft::WRL::ComPtr<ID3DBlob> pPsByteCode)
+    void DirectXSimpleShader::InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout, Microsoft::WRL::ComPtr<ID3DBlob> pVsByteCode, Microsoft::WRL::ComPtr<ID3DBlob> pPsByteCode)
     {
         D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
         ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
@@ -80,11 +88,5 @@ namespace Engine
                                          : 0;
         psoDesc.DSVFormat = DirectXSwapchain::k_DepthStencilFormat;
         ThrowIfFailed(DirectXContext::Get()->m_Device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
-    }
-
-    void DirectXShader::Begin()
-    {
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
     }
 }
