@@ -25,7 +25,9 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
-        
+
+        auto t = pMesh->GetConstantBuffer().Resource();
+        auto r = pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress();
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(0, pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress());
     }
 

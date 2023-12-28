@@ -55,7 +55,8 @@ private:
 
     Engine::WindowsWindow* m_Window;
 
-    std::unique_ptr<Engine::DirectXMesh> m_Quad; 
+    std::unique_ptr<Engine::DirectXMesh> m_Triangle1; 
+    std::unique_ptr<Engine::DirectXMesh> m_Triangle2; 
 
     static Application* s_Instance;
     

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <DirectXMath.h>
 
+#include "DirectXCommandObject.h"
+#include "DirectXContext.h"
 #include "DirectXFrameData.h"
 #include "MathHelper.h"
 #include "Resource/Texture.h"
@@ -17,7 +19,8 @@ namespace Engine
     class DirectXMesh
     {
     public:
-        DirectXMesh(std::vector<VertexTex>& pVertices, std::vector<uint16_t>& pIndices, std::shared_ptr<DirectXShader> pShader);
+        template <typename T, typename = std::enable_if_t<std::is_base_of_v<Vertex, T>>>
+        DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, std::shared_ptr<DirectXShader> pShader);
 
         void Draw();
 
@@ -48,9 +51,50 @@ namespace Engine
         std::shared_ptr<DirectXShader> m_Shader;
         
         std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
-        Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_ConstantBufferHeap = nullptr;
 
         Texture m_Texture;
     };
-    
+
+    template <typename T, typename>
+    DirectXMesh::DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices,
+        std::shared_ptr<DirectXShader> pShader)
+            : m_IndexCount(pIndices.size()), m_Shader(pShader)
+    {
+        // ===== Constant Buffer =====
+        m_ConstantBuffer = std::make_unique<UploadBuffer<ObjectConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
+
+        // ===== Data =====
+        DirectXContext::Get()->m_CommandObject->GetCommandAllocator()->Reset();
+        DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator());
+
+        const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
+        const auto indicesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
+        
+        ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_VertexBufferCpu));
+        CopyMemory(m_VertexBufferCpu->GetBufferPointer(), pVertices.data(), verticesByteSize);
+
+        ThrowIfFailed(D3DCreateBlob(indicesByteSize, &m_IndexBufferCpu));
+        CopyMemory(m_IndexBufferCpu->GetBufferPointer(), pIndices.data(), indicesByteSize);
+
+        m_VertexBufferGpu = d3dUtil::CreateDefaultBuffer(
+            DirectXContext::Get()->m_Device.Get(),
+            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pVertices.data(), verticesByteSize,
+            m_VertexBufferUploader);
+
+        m_IndexBufferGpu = d3dUtil::CreateDefaultBuffer(
+            DirectXContext::Get()->m_Device.Get(),
+            DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize,
+            m_IndexBufferUploader);
+
+        m_VertexBuffer.BufferLocation = m_VertexBufferGpu->GetGPUVirtualAddress();
+        m_VertexBuffer.StrideInBytes = sizeof(T);
+        m_VertexBuffer.SizeInBytes = verticesByteSize;
+        
+        m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
+        m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
+        m_IndexBuffer.SizeInBytes = indicesByteSize;
+
+        DirectXContext::Get()->m_CommandObject->Execute();
+        DirectXContext::Get()->m_CommandObject->Flush();
+    }
 }

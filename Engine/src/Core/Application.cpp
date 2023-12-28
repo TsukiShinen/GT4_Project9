@@ -25,11 +25,19 @@ Application::Application(const ApplicationSpecification& pSpecification)
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
 		Engine::VertexTex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT2(0, 1)},
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 0)},
-		Engine::VertexTex{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 1)}
 	};
-	std::vector<uint16_t> indices = { 0, 1, 2, 3, 2, 1 };
-	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices, Engine::DirectXContext::Get()->GetTextureShader());
-	m_Quad->SetTexture(Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone"));
+	std::vector<uint16_t> indices = { 0, 1, 2};
+	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices, indices, Engine::DirectXContext::Get()->GetTextureShader());
+	m_Triangle1->SetTexture(Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone"));
+
+	
+	std::vector vertices2 = {
+		Engine::VertexColor{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
+		Engine::VertexColor{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 1, 0, 1)},
+		Engine::VertexColor{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)},
+	};
+	std::vector<uint16_t> indices2 = { 0, 1, 2 };
+	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2, Engine::DirectXContext::Get()->GetBaseShader());
 	
 	__int64 countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
@@ -56,7 +64,8 @@ void Application::Run()
 			
 			Engine::DirectXApi::BeginFrame();
 			
-			m_Quad->Draw();
+			m_Triangle1->Draw();
+			m_Triangle2->Draw();
 			
 			Engine::DirectXApi::EndFrame();
 		}

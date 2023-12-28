@@ -43,17 +43,8 @@ namespace Engine
                                         Application::Get()->GetWindow()->GetHeight());
         s_Instance->m_ResourceManager = std::make_unique<DirectXResourceManager>(1000);
 
-        std::vector<D3D12_INPUT_ELEMENT_DESC> layout = {
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
-        };
-        s_Instance->m_BaseShader = std::make_shared<DirectXSimpleShader>(layout, L"Shaders\\color.hlsl");
-        
-        std::vector<D3D12_INPUT_ELEMENT_DESC> layoutTexture = {
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
-        };
-        s_Instance->m_TextureShader = std::make_shared<DirectXTextureShader>(layoutTexture, L"Shaders\\Builtin.Texture.hlsl");
+        s_Instance->m_BaseShader = std::make_shared<DirectXSimpleShader>(VertexColor::GetLayout(), L"Shaders\\color.hlsl");
+        s_Instance->m_TextureShader = std::make_shared<DirectXTextureShader>(VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
 
         // ===== Frame Resources =====
         for(int i = 0; i < gNumFrameResources; ++i)
@@ -68,12 +59,12 @@ namespace Engine
 
     std::shared_ptr<DirectXShader> DirectXContext::GetBaseShader() const
     {
-        return std::static_pointer_cast<DirectXShader>(m_BaseShader);
+        return m_BaseShader;
     }
 
     std::shared_ptr<DirectXShader> DirectXContext::GetTextureShader() const
     {
-        return std::static_pointer_cast<DirectXShader>(m_TextureShader);
+        return m_TextureShader;
     }
 
 
