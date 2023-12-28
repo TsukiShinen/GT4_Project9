@@ -2,7 +2,7 @@
 
 #include <ranges>
 
-#include "Renderer/DDSTextureLoader.h"
+#include "DDSTextureLoader.h"
 #include "Renderer/DirectXCommandObject.h"
 #include "Renderer/DirectXContext.h"
 
@@ -28,7 +28,8 @@ namespace Engine
 	DirectXResourceManager::~DirectXResourceManager()
 	{
 		for (const auto& texture : m_Textures | std::views::values)
-			delete texture;
+			if (texture)
+				delete texture;
 	}
 
 	void DirectXResourceManager::BindDescriptorsHeap() const
@@ -78,6 +79,11 @@ namespace Engine
 
 	CD3DX12_GPU_DESCRIPTOR_HANDLE DirectXResourceManager::GetTextureHandle(const std::string& pName)
 	{
+		if (!m_Textures.contains(pName))
+		{
+			CORE_WARN("Try to GetTextureHandle of not found Texture : %s.", pName);
+			throw std::runtime_error("Couldn't get Texture Handle.");
+		}
 		return GetTextureHandle(m_Textures[pName]);
 	}
 
@@ -90,6 +96,24 @@ namespace Engine
 
 	void DirectXResourceManager::ReleaseTexture(const std::string& pName)
 	{
-		// TODO : Release Texture
+		if (!m_Textures.contains(pName))
+		{
+			CORE_WARN("Try to release a non existant texture : %s.", pName);
+			return;
+		}
+		
+		m_TextureIndicesAvailable.push(m_Textures[pName]->HeapIndex);
+		--m_TextureCount;
+
+		delete m_Textures[pName];
+		m_Textures[pName] = nullptr;
+	}
+
+	void DirectXResourceManager::ReleaseTexture(const Texture* pTexture)
+	{
+		m_TextureIndicesAvailable.push(pTexture->HeapIndex);
+		--m_TextureCount;
+
+		delete pTexture;
 	}
 }

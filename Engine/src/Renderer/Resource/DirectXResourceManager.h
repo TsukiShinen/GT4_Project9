@@ -21,6 +21,7 @@ namespace Engine
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetTextureHandle(const std::string& pName);
 		CD3DX12_GPU_DESCRIPTOR_HANDLE GetTextureHandle(const Texture* pTexture) const;
 		void ReleaseTexture(const std::string& pName);
+		void ReleaseTexture(const Texture* pTexture);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_SrvDescriptorHeap = nullptr;
