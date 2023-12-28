@@ -5,7 +5,7 @@ namespace Engine
     DirectXCamera::DirectXCamera(float width, float height, float fovDegree, float nearZ, float farZ)
         : m_FovDegree(fovDegree), m_NearZ(nearZ), m_FarZ(farZ)
     {
-        DirectX::XMVECTOR eyePos = DirectX::XMVectorSet(0.f, 0.f, -2.f, 0.f);
+        DirectX::XMVECTOR eyePos = DirectX::XMVectorSet(0.f, 0.f, -5.f, 0.f);
         DirectX::XMVECTOR lookAtPos = DirectX::XMVectorSet(0.f, 0.f, 0.f, 0.f);
         DirectX::XMVECTOR upVector = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
@@ -34,7 +34,8 @@ namespace Engine
 
         const DirectX::XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-        XMStoreFloat4x4(&m_MainPassCB.ViewProj, XMMatrixTranspose(viewProj));
+        XMStoreFloat4x4(&m_ViewProj, viewProj);
+        XMStoreFloat4x4(&m_ViewProjT, XMMatrixTranspose(viewProj));
     }
 
 }

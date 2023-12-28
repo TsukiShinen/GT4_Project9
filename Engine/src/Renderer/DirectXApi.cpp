@@ -4,6 +4,7 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXShader.h"
+#include "DirectXMaterial.h"
 #include "DirectXCamera.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
@@ -45,7 +46,7 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ResourceBarrier(1, &barrier);
 
         // Clear the back buffer and depth buffer.
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Black, 0, nullptr);
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Gray, 0, nullptr);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearDepthStencilView(DirectXContext::Get()->m_Swapchain->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
         const auto renderTargetDescriptor = DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView();
@@ -57,10 +58,20 @@ namespace Engine
         DirectXContext::Get()->m_Camera->Update();
 
         DirectXContext::Get()->m_BaseShader->Begin();
+        DirectXContext::Get()->m_BaseMaterial->Bind();
 
-        const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
-        currPassCb->CopyData(0, DirectXContext::Get()->m_Camera->m_MainPassCB);
-        
+
+        DirectXContext::Get()->CurrentFrameData().SetViewProj(DirectXContext::Get()->m_Camera->m_ViewProjT);
+        DirectXContext::Get()->CurrentFrameData().SetEyePosition(DirectXContext::Get()->m_Camera->m_EyePosition);
+        DirectionalLight light = DirectionalLight();
+        light.Direction = { 0.57735f, 0.57735f, -0.57735f };
+        light.Strength = { 1.f,  1.f,  1.f };
+        DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(0, light);
+        DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(1);
+
+        auto test = DirectXContext::Get()->CurrentFrameData().m_Constants;
+
+        DirectXContext::Get()->CurrentFrameData().Update();
         DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }
 

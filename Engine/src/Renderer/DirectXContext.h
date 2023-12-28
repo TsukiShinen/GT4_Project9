@@ -12,6 +12,7 @@ namespace Engine
     class DirectXCommandObject;
     class DirectXSwapchain;
     class DirectXShader;
+    class DirectXMaterial;
     class DirectXCamera;
 
     class DirectXContext
@@ -33,6 +34,7 @@ namespace Engine
         std::unique_ptr<DirectXCommandObject> m_CommandObject;
 
         std::unique_ptr<DirectXShader> m_BaseShader;
+        std::unique_ptr<DirectXMaterial> m_BaseMaterial;
         
         UINT m_CbvSrvUavDescriptorSize = 0;
         
@@ -48,6 +50,8 @@ namespace Engine
         // Camera
         std::unique_ptr<DirectXCamera> m_Camera;
 
+
+
     private:
         static DirectXContext* s_Instance;
 
@@ -56,6 +60,7 @@ namespace Engine
         friend class DirectXCommandObject;
         friend class DirectXShader;
         friend class DirectXMesh;
+        friend class DirectXMaterial;
     };
     
 }
