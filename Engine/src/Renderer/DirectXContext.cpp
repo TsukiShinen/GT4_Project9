@@ -22,7 +22,6 @@ namespace Engine
 
 	void DirectXContext::Initialize()
 	{
-		assert(!s_Instance, "DirectX context already initialized!");
 		s_Instance = new DirectXContext();
 
 		// ===== Factory =====

@@ -73,7 +73,8 @@ namespace Engine
 			clientRect.right - clientRect.left,
 			clientRect.bottom - clientRect.top,
 			nullptr, nullptr, m_Instance, nullptr);
-		assert(m_Window, GetLastError());
+		if (!m_Window)
+			throw std::runtime_error("Failed to create window");
 		SetWindowLongPtr(m_Window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
 		ShowWindow(m_Window, SW_SHOW);
