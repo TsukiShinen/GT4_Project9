@@ -29,6 +29,11 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	Engine::Texture* stone = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
 	Engine::Texture* bingus = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\bingus.dds", "Bingus");
 
+	// Shaders
+	m_SimpleShader = std::make_unique<Engine::DirectXSimpleShader>(Engine::VertexColor::GetLayout(), L"Shaders\\Builtin.Color.hlsl");
+	m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
+	m_LitShader = std::make_unique<Engine::DirectXLitShader>(Engine::VertexLit::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
+
 	// Materials
 	m_SimpleMaterial = std::make_unique<Engine::DirectXSimpleMaterial>(m_SimpleShader.get());
 	m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(m_TextureShader.get(), stone);
@@ -62,11 +67,11 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2);
 
 	// Init objects
-
 	m_BingusObject = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(0, -0.3f, 0), m_BingusMesh.get(), m_BingusMaterial.get());
 	m_BingusObject->GetTransform()->SetScale(DirectX::XMFLOAT3(0.05f, 0.05f, 0.05f));
 	m_BunnyObject = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(2, 0, 0), m_BunnyMesh.get(), m_StoneMaterial.get());
 	m_BunnyObject2 = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(-2, 0, 0), m_BunnyMesh.get(), m_StoneMaterial2.get());
+
 }
 
 void Sandbox::Update(const Engine::Timestep pDeltaTime)

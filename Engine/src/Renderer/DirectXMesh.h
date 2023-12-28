@@ -23,7 +23,6 @@ namespace Engine
 		void Draw();
 
     private:
-
 		int m_NumFramesDirty = DirectXSwapchain::k_SwapChainBufferCount;
 
 		D3D12_PRIMITIVE_TOPOLOGY m_PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -71,8 +70,9 @@ namespace Engine
 		m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
 		m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
 		m_IndexBuffer.SizeInBytes = indicesByteSize;
-
+		
+		/* Create a crash a end of application
 		m_VertexBufferUploader->Release();
-		m_IndexBufferUploader->Release();
+		m_IndexBufferUploader->Release();*/
 	}
 }
