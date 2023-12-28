@@ -24,7 +24,7 @@ namespace Engine
 		m_Texture = texture;
 	}
 
-	void DirectXLitMaterial::Bind(DirectXMesh* mesh)
+	void DirectXLitMaterial::Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer)
 	{
 		if (m_IsDirty)
 		{
@@ -32,7 +32,7 @@ namespace Engine
 			m_IsDirty = false;
 		}
 
-		m_Shader->Bind(mesh);
+		m_Shader->Bind(objectConstantBuffer);
 
 		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(2, m_MatCB->Resource()->GetGPUVirtualAddress());
 		if (m_Texture != nullptr)

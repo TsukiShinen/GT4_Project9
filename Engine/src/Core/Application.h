@@ -5,6 +5,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Platform/WindowsWindow.h"
 #include "Renderer/DirectXMesh.h"
+#include "Core/Object.h"
 
 struct ApplicationCommandLineArgs
 {
@@ -65,10 +66,17 @@ private:
     std::unique_ptr<Engine::DirectXTextureMaterial> m_TextureMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_LitMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_BingusMaterial;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial2;
 
-    std::unique_ptr<Engine::DirectXMesh> m_Cube;
+    std::unique_ptr<Engine::DirectXMesh> m_BingusMesh;
+    std::unique_ptr<Engine::DirectXMesh> m_BunnyMesh;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle1;
-    std::unique_ptr<Engine::DirectXMesh> m_Triangle2; 
+    std::unique_ptr<Engine::DirectXMesh> m_Triangle2;
+
+    std::unique_ptr<Engine::Object> m_BingusObject;
+    std::unique_ptr<Engine::Object> m_BunnyObject;
+    std::unique_ptr<Engine::Object> m_BunnyObject2;
 
     static Application* s_Instance;
 };

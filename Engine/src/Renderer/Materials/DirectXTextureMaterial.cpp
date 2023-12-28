@@ -3,6 +3,7 @@
 #include "Renderer/Shaders/DirectXShader.h"
 #include "Renderer/DirectXContext.h"
 #include "Renderer/Resource/DirectXResourceManager.h"
+#include "Renderer/DirectXCommandObject.h"
 
 namespace Engine
 {
@@ -16,9 +17,9 @@ namespace Engine
 	{
 	}
 
-	void Engine::DirectXTextureMaterial::Bind(DirectXMesh* mesh)
+	void Engine::DirectXTextureMaterial::Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer)
 	{
-		m_Shader->Bind(mesh);
+		m_Shader->Bind(objectConstantBuffer);
 		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(0, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
 	}
 }

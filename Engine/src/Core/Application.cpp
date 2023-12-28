@@ -24,6 +24,18 @@ class Engine::DirectXCamera;
 
 Application* Application::s_Instance = nullptr;
 
+void CreateMeshFromFile(const char* file, std::unique_ptr<Engine::DirectXMesh>& mesh)
+{
+	std::vector<Engine::VertexLit> vertices;
+	Engine::ObjLoader::LoadObj(file, &vertices);
+	std::vector<uint16_t> indices;
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		indices.push_back(i);
+	}
+	mesh = std::make_unique<Engine::DirectXMesh>(vertices, indices);
+}
+
 Application::Application(const ApplicationSpecification& pSpecification)
 {
     assert(!s_Instance, "Application already exist!");
@@ -51,35 +63,39 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	s_Instance->m_LitMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
 	s_Instance->m_BingusMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
 	s_Instance->m_BingusMaterial->SetTexture(bingus);
+	s_Instance->m_StoneMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
+	s_Instance->m_StoneMaterial->SetTexture(stone);
+	s_Instance->m_StoneMaterial2 = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get(), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.5f);
+	s_Instance->m_StoneMaterial2->SetTexture(stone);
 
-	// Init objects
-	
-	std::vector<Engine::VertexLit> vertices;
-	Engine::ObjLoader::LoadObj(".\\Objs\\bingus.obj", &vertices);
-	std::vector<uint16_t> indices;
-	for (size_t i = 0; i < vertices.size(); i++)
-	{
-		indices.push_back(i);
-	}
-	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices, (Engine::DirectXMaterial*)s_Instance->m_BingusMaterial.get());
-	
-	
-	std::vector vertices3 {
+	// Init mesh
+	CreateMeshFromFile(".\\Objs\\bingus.obj", m_BingusMesh);
+	CreateMeshFromFile(".\\Objs\\bunnyex.obj", m_BunnyMesh);
+
+	std::vector vertices3{
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT2(0, 0)},
 		Engine::VertexTex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT2(0, 1)},
 		Engine::VertexTex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT2(1, 0)},
 	};
-	std::vector<uint16_t> indices3 = { 0, 1, 2};
-	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3, (Engine::DirectXMaterial*)s_Instance->m_TextureMaterial.get());
-	
-	
+	std::vector<uint16_t> indices3 = { 0, 1, 2 };
+	m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3);
+
+
 	std::vector vertices2 = {
 		Engine::VertexColor{DirectX::XMFLOAT3{.5f, -.5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
 		Engine::VertexColor{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 1, 0, 1)},
 		Engine::VertexColor{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)},
 	};
 	std::vector<uint16_t> indices2 = { 0, 1, 2 };
-	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2, (Engine::DirectXMaterial*)s_Instance->m_SimpleMaterial.get());
+	m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2);
+
+	// Init objects
+
+	s_Instance->m_BingusObject = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(0, -0.3f, 0), m_BingusMesh.get(), s_Instance->m_BingusMaterial.get());
+	s_Instance->m_BingusObject->GetTransform()->SetScale(DirectX::XMFLOAT3(0.05f, 0.05f, 0.05f));
+	s_Instance->m_BunnyObject = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(2, 0, 0), m_BunnyMesh.get(), s_Instance->m_StoneMaterial.get());
+	s_Instance->m_BunnyObject2 = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(-2, 0, 0), m_BunnyMesh.get(), s_Instance->m_StoneMaterial2.get());
+
 	
 	__int64 countsPerSec;
 	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
@@ -115,8 +131,15 @@ void Application::Run()
 			
 			//m_Triangle1->Draw();
 			//m_Triangle2->Draw();
-			m_Cube->Draw();
-			
+			//m_Cube->Draw();
+			m_BingusObject->GetTransform()->Rotate(deltaTime.GetSeconds(), 0, 0);
+			m_BunnyObject->GetTransform()->Rotate(deltaTime.GetSeconds(), 0, 0);
+			m_BunnyObject2->GetTransform()->Rotate(deltaTime.GetSeconds(), 0, 0);
+
+			m_BingusObject->Render();
+			m_BunnyObject->Render();
+			m_BunnyObject2->Render();
+
 			Engine::DirectXApi::EndFrame();
 		}
 

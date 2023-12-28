@@ -107,6 +107,7 @@ namespace Engine
         friend class DirectXTextureMaterial;
         friend class DirectXLitMaterial;
         friend class DirectXResourceManager;
+        friend class MeshRenderer;
     };
 
 #define THROW_IF_FAILED(hr) DirectXContext::LogErrorIfFailed(hr, __FILE__, __LINE__);

@@ -4,6 +4,8 @@
 
 namespace Engine {
 
+	class MeshRenderer;
+
 	/// <summary>
 	/// Super basic Object class to link a DirectX's mesh to a Transform
 	/// </summary>
@@ -11,7 +13,7 @@ namespace Engine {
 	{
 	public:
 
-		Object(DirectXMesh* mesh, DirectX::XMFLOAT3 position);
+		Object(DirectX::XMFLOAT3 position, DirectXMesh* mesh, DirectXMaterial* material = nullptr);
 
 		~Object();
 
@@ -32,7 +34,7 @@ namespace Engine {
 	private:
 
 		std::unique_ptr<Transform> m_Transform;
-		DirectXMesh* m_Mesh;
+		std::unique_ptr<MeshRenderer> m_Renderer;
 	};
 }
 

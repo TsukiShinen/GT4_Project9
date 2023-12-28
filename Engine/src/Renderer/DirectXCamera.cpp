@@ -68,7 +68,7 @@ namespace Engine
             float dy = DirectX::XMConvertToRadians(0.25f * (y - m_LastMousePos.y));
 
             m_Transform->RotateWorldY(dx);
-            m_Transform->RotateLocalX(-dy);
+            m_Transform->RotateLocalX(dy);
         }
         m_LastMousePos = { x,y };
     }

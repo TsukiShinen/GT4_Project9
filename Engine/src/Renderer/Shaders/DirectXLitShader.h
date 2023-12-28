@@ -10,7 +10,7 @@ namespace Engine
     public:
         DirectXLitShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath);
 
-        void Bind(DirectXMesh* pMesh) override;
+        void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) override;
     private:
         void InitializeSignature();
         void InitializePipelineState(std::vector<D3D12_INPUT_ELEMENT_DESC> pLayout,

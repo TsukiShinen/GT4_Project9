@@ -28,7 +28,7 @@ namespace Engine
 		DirectXLitMaterial(DirectXLitShader* shader);
 		DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo, DirectX::XMFLOAT4 specular, float smoothness, Texture* texture = nullptr);
 
-		void Bind(DirectXMesh* mesh) override;
+		void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) override;
 		void SetTexture(Texture* texture);
 
 	private:

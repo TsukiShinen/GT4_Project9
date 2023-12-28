@@ -14,7 +14,7 @@ namespace Engine
 		DirectXTextureMaterial(DirectXTextureShader* shader);
 		DirectXTextureMaterial(DirectXTextureShader* shader, Texture* texture);
 
-		void Bind(DirectXMesh* mesh) override;
+		void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) override;
 
 	protected:
 		Texture* m_Texture;
