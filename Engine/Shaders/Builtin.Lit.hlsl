@@ -97,14 +97,14 @@ float4 PS(VertexOut pin) : SV_Target
     float3 normal = normalize(pin.NormalW);
 
 
-    float diffuseFactor = dot(pin.NormalW, lightDir);
+    float diffuseFactor = dot(normal, lightDir);
     if (diffuseFactor > 0)
     {
          diffuseColor = float4(gDirectionalLights[0].Color * diffuseFactor, 1.0f);
 
          float3 vertexToEye = normalize(gEyePosW - pin.PosW);
          float3 lightReflect = normalize(reflect(gDirectionalLights[0].Direction, normal));
-
+         
          float specularFactor = dot(vertexToEye, lightReflect);
 
          if (specularFactor > 0)
@@ -114,7 +114,7 @@ float4 PS(VertexOut pin) : SV_Target
          }
     }
 
-    return mainTexture.Sample(mainSample, pin.TexC) * (ambientColor + diffuseColor + specularColor);
+    return mainTexture.Sample(mainSample, pin.TexC) * gAlbedo * (ambientColor + diffuseColor + specularColor);
     /*
    float3 diffuse = gDirectionalLights[0].Color * saturate(diffuseFactor);
 
