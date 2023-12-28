@@ -13,26 +13,16 @@ namespace Engine
 {
 	class DirectXMaterial;
 
-	struct ObjectConstants
-	{
-		DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
-	};
+    class DirectXMesh
+    {
 
-	class DirectXMesh
-	{
-	public:
-		template <typename T, typename = std::enable_if_t<std::is_base_of_v<Vertex, T>>>
-		DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, DirectXMaterial* pMaterial);
+    public:
+        template <typename T, typename = std::enable_if_t<std::is_base_of_v<Vertex, T>>>
+        DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices);
 
 		void Draw();
 
-		void SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix);
-
-		[[nodiscard]] UploadBuffer<ObjectConstants>& GetConstantBuffer() const { return *m_ConstantBuffer; }
-
-	private:
-		DirectX::XMFLOAT4X4 m_TransformMatrix = MathHelper::Identity4x4();
-
+    private:
 		int m_NumFramesDirty = DirectXSwapchain::k_SwapChainBufferCount;
 
 		D3D12_PRIMITIVE_TOPOLOGY m_PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -46,20 +36,12 @@ namespace Engine
 		D3D12_VERTEX_BUFFER_VIEW m_VertexBuffer;
 		D3D12_INDEX_BUFFER_VIEW m_IndexBuffer;
 		UINT m_IndexCount = 0;
-
-		DirectXMaterial* m_Material;
-
-		std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
 	};
 
 	template <typename T, typename>
-	DirectXMesh::DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices, DirectXMaterial* pMaterial)
-		: m_IndexCount(pIndices.size()), m_Material(pMaterial)
+	DirectXMesh::DirectXMesh(std::vector<T>& pVertices, std::vector<uint16_t>& pIndices)
+		: m_IndexCount(pIndices.size())
 	{
-		// ===== Constant Buffer =====
-		m_ConstantBuffer = std::make_unique<UploadBuffer<ObjectConstants>>(
-			DirectXContext::Get()->m_Device.Get(), 1, true);
-
 		// ===== Data =====
 		DirectXContext::Get()->m_CommandObject->GetCommandAllocator()->Reset();
 		DirectXContext::Get()->m_CommandObject->

@@ -12,6 +12,6 @@ namespace Engine
 	public:
 		DirectXSimpleMaterial(DirectXSimpleShader* shader);
 
-		void Bind(DirectXMesh* mesh) override;
+		void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) override;
 	};
 }

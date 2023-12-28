@@ -6,6 +6,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Platform/WindowsWindow.h"
 #include "Renderer/DirectXMesh.h"
+#include "Core/Object.h"
 
 int main(int pArgc, char** pArgv);
 

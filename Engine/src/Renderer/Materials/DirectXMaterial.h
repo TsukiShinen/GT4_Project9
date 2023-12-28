@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/MeshRenderer.h"
+
 namespace Engine
 {
 	class DirectXShader;
@@ -10,7 +12,7 @@ namespace Engine
 	public:
 		DirectXMaterial(DirectXShader* shader);
 
-		virtual void Bind(DirectXMesh* mesh) = 0;
+		virtual void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) = 0;
 
 	protected:
 		DirectXShader* m_Shader;

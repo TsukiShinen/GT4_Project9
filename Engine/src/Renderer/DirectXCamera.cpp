@@ -66,16 +66,16 @@ namespace Engine
 		}
 	}
 
-	void DirectXCamera::MouseMove(float x, float y)
-	{
-		if (Input::IsMouseButtonPressed(Engine::Mouse::Button1))
-		{
-			float dx = DirectX::XMConvertToRadians(0.25f * (x - m_LastMousePos.x));
-			float dy = DirectX::XMConvertToRadians(0.25f * (y - m_LastMousePos.y));
+    void DirectXCamera::MouseMove(float x, float y)
+    {
+        if (Input::IsMouseButtonPressed(Engine::Mouse::Button1)) {
+            float dx = DirectX::XMConvertToRadians(0.25f * (x - m_LastMousePos.x));
+            float dy = DirectX::XMConvertToRadians(0.25f * (y - m_LastMousePos.y));
 
-			m_Transform->RotateWorldY(dx);
-			m_Transform->RotateLocalX(-dy);
-		}
-		m_LastMousePos = {x, y};
-	}
+            m_Transform->RotateWorldY(dx);
+            m_Transform->RotateLocalX(dy);
+        }
+        m_LastMousePos = {x, y};
+    }
+
 }

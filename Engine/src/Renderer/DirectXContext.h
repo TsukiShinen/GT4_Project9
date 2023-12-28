@@ -45,10 +45,6 @@ namespace Engine
 	public:
 		static void Initialize();
 		static void Shutdown();
-		/*
-		std::shared_ptr<DirectXShader> GetBaseShader() const;
-		std::shared_ptr<DirectXShader> GetTextureShader() const;
-		*/
 		DirectXResourceManager& GetResourceManager() const { return *m_ResourceManager; }
 
 		static void LogErrorIfFailed(const HRESULT pHr, const char* pFile, int pLine)
@@ -93,12 +89,6 @@ namespace Engine
 
 		std::unique_ptr<DirectXCommandObject> m_CommandObject;
 
-		std::unique_ptr<DirectXMaterial> m_BaseMaterial; // TODO : Move this in mesh
-		/*
-		std::shared_ptr<DirectXSimpleShader> m_BaseShader;
-		std::shared_ptr<DirectXTextureShader> m_TextureShader;
-		std::shared_ptr<DirectXLitShader> m_LitShader;
-		*/
 		std::unique_ptr<DirectXResourceManager> m_ResourceManager;
 
 		UINT m_CbvSrvUavDescriptorSize = 0;
@@ -131,6 +121,7 @@ namespace Engine
 		friend class DirectXTextureMaterial;
 		friend class DirectXLitMaterial;
 		friend class DirectXResourceManager;
+		friend class MeshRenderer;
 	};
 
 #define THROW_IF_FAILED(hr) DirectXContext::LogErrorIfFailed(hr, __FILE__, __LINE__);

@@ -5,6 +5,7 @@
 
 #include "../DirectXSwapchain.h"
 #include "../DirectXCommandObject.h"
+#include "../DirectXFrameData.h"
 #include "Debug/Log.h"
 
 namespace Engine
@@ -22,17 +23,17 @@ namespace Engine
 		InitializePipelineState(pLayout, vsByteCode, psByteCode);
 	}
 
-	void DirectXLitShader::Bind(DirectXMesh* pMesh)
-	{
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
+
+    void DirectXLitShader::Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer)
+    {
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
 
 		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
 			1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
-
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
-			0, pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress());
-	}
+	
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(0, objectConstantBuffer.Resource()->GetGPUVirtualAddress());
+    }
 
 	void DirectXLitShader::InitializeSignature()
 	{

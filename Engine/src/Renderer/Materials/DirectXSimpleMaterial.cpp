@@ -11,8 +11,8 @@ namespace Engine
 	{
 	}
 
-	void DirectXSimpleMaterial::Bind(DirectXMesh* mesh)
+	void DirectXSimpleMaterial::Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer)
 	{
-		m_Shader->Bind(mesh);
+		m_Shader->Bind(objectConstantBuffer);
 	}
 }

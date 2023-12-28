@@ -5,6 +5,7 @@
 
 #include "../DirectXSwapchain.h"
 #include "../DirectXCommandObject.h"
+#include "../DirectXFrameData.h"
 #include "Debug/Log.h"
 #include "Renderer/Resource/DirectXResourceManager.h"
 #include "Renderer/Resource/Texture.h"
@@ -24,17 +25,17 @@ namespace Engine
 		InitializePipelineState(pLayout, vsByteCode, psByteCode);
 	}
 
-	void DirectXTextureShader::Bind(DirectXMesh* pMesh)
-	{
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
-
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
+    void DirectXTextureShader::Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer)
+    {
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetPipelineState(GetState().Get());
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootSignature(GetSignature().Get());
+        
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
 			2, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
-
-		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
-			1, pMesh->GetConstantBuffer().Resource()->GetGPUVirtualAddress());
-	}
+        
+        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(
+			1, objectConstantBuffer.Resource()->GetGPUVirtualAddress());
+    }
 
 	void DirectXTextureShader::InitializeSignature()
 	{

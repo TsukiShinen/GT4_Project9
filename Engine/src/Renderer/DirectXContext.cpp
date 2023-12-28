@@ -41,42 +41,26 @@ namespace Engine
 			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		s_Instance->InitializeMsaa();
 
-		s_Instance->m_Camera = std::make_unique<DirectXCamera>(Application::Get()->GetWindow()->GetWidth(),
-		                                                       Application::Get()->GetWindow()->GetHeight(), 45.f, 0.1f,
-		                                                       1000.f);
-		s_Instance->m_CommandObject = std::make_unique<DirectXCommandObject>();
-		s_Instance->m_Swapchain = std::make_unique<DirectXSwapchain>(Application::Get()->GetWindow()->GetWidth(),
-		                                                             Application::Get()->GetWindow()->GetHeight());
-		s_Instance->m_Swapchain->Resize(Application::Get()->GetWindow()->GetWidth(),
-		                                Application::Get()->GetWindow()->GetHeight());
-		s_Instance->m_ResourceManager = std::make_unique<DirectXResourceManager>(1000);
-		/*
-		s_Instance->m_BaseShader = std::make_shared<DirectXSimpleShader>(VertexColor::GetLayout(), L"Shaders\\color.hlsl");
-		s_Instance->m_TextureShader = std::make_shared<DirectXTextureShader>(VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
-		s_Instance->m_LitShader = std::make_shared<DirectXLitShader>(VertexTex::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
-		*/
-		// ===== Frame Resources =====
-		for (int i = 0; i < gNumFrameResources; ++i)
-		{
-			s_Instance->m_FramesData.push_back(std::make_unique<DirectXFrameData>(s_Instance->m_Device.Get(), 1));
-		}
-	}
+        s_Instance->m_Camera = std::make_unique<DirectXCamera>(Application::Get()->GetWindow()->GetWidth(),
+															   Application::Get()->GetWindow()->GetHeight(), 45.f, 0.1f, 
+															   1000.f);
+        s_Instance->m_CommandObject = std::make_unique<DirectXCommandObject>();
+        s_Instance->m_Swapchain = std::make_unique<DirectXSwapchain>(Application::Get()->GetWindow()->GetWidth(),
+                                                                     Application::Get()->GetWindow()->GetHeight());
+        s_Instance->m_Swapchain->Resize(Application::Get()->GetWindow()->GetWidth(),
+                                        Application::Get()->GetWindow()->GetHeight());
+        s_Instance->m_ResourceManager = std::make_unique<DirectXResourceManager>(1000);
+        
+        // ===== Frame Resources =====
+        for(int i = 0; i < gNumFrameResources; ++i)
+        {
+            s_Instance->m_FramesData.push_back(std::make_unique<DirectXFrameData>(s_Instance->m_Device.Get(), 1));
+        }
+    }
 
-	void DirectXContext::Shutdown()
-	{
-	}
-
-	/*
-	std::shared_ptr<DirectXShader> DirectXContext::GetBaseShader() const
-	{
-	    return m_BaseShader;
-	}
-
-	std::shared_ptr<DirectXShader> DirectXContext::GetTextureShader() const
-	{
-	    return m_TextureShader;
-	}*/
-
+    void DirectXContext::Shutdown()
+    {
+    }
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> DirectXContext::CreateDefaultBuffer(ID3D12Device* pDevice,
 	                                                                           ID3D12GraphicsCommandList* pCmdList,

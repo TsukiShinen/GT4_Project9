@@ -2,7 +2,7 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
-#include "Renderer/DirectXMesh.h"
+#include "Core/MeshRenderer.h"
 
 namespace Engine
 {
@@ -12,7 +12,7 @@ namespace Engine
 		Microsoft::WRL::ComPtr<ID3D12RootSignature>& GetSignature() { return m_RootSignature; }
 		Microsoft::WRL::ComPtr<ID3D12PipelineState>& GetState() { return m_PipelineState; }
 
-		virtual void Bind(DirectXMesh* pMesh) = 0;
+        virtual void Bind(const UploadBuffer<ObjectConstants>& objectConstantBuffer) = 0;
 
 	protected:
 		static std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
