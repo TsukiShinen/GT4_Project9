@@ -67,7 +67,7 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator());
 
         const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
-        const auto indicesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
+        const auto indicesByteSize = static_cast<UINT>(pIndices.size()) * sizeof(uint16_t);
         
         ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_VertexBufferCpu));
         CopyMemory(m_VertexBufferCpu->GetBufferPointer(), pVertices.data(), verticesByteSize);
