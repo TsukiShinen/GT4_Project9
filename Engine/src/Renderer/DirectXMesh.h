@@ -86,5 +86,8 @@ namespace Engine
 
         DirectXContext::Get()->m_CommandObject->Execute();
         DirectXContext::Get()->m_CommandObject->Flush();
+        
+        m_VertexBufferUploader->Release();
+        m_IndexBufferUploader->Release();
     }
 }
