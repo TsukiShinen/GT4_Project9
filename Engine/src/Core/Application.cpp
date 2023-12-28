@@ -4,6 +4,8 @@
 #include "Debug/Log.h"
 #include "Events/KeyEvent.h"
 #include "Renderer/DirectXApi.h"
+#include "Core/ObjLoader.h"
+
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 Application* Application::s_Instance = nullptr;
@@ -20,12 +22,22 @@ Application::Application(const ApplicationSpecification& pSpecification)
 
 	Engine::DirectXApi::Initialize();
 	
+	std::vector<Engine::Vertex> vertices;
+	Engine::ObjLoader::LoadObj(".\\Objs\\untitled.obj", &vertices);
+	std::vector<uint16_t> indices;
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		indices.push_back(i);
+	}
+
+	/*
 	std::vector vertices = {
-		Engine::Vertex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT4(1, 0, 0, 1)},
-		Engine::Vertex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT4(0, 1, 0, 1)},
-		Engine::Vertex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT4(0, 0, 1, 1)}
+		Engine::Vertex{DirectX::XMFLOAT3{-.5f, .5f, 0}, DirectX::XMFLOAT3{0, 0, 1}},
+		Engine::Vertex{DirectX::XMFLOAT3{.5f, .5f, 0}, DirectX::XMFLOAT3{0, 0, 1}},
+		Engine::Vertex{DirectX::XMFLOAT3{-.5f, -.5f, 0}, DirectX::XMFLOAT3{0, 0, 1}}
 	};
 	std::vector<uint16_t> indices = { 0, 1, 2 };
+	*/
 	m_Quad = std::make_unique<Engine::DirectXMesh>(vertices, indices);
 	
 	__int64 countsPerSec;
