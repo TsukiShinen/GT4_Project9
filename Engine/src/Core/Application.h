@@ -45,6 +45,8 @@ private:
     bool OnWindowClose(Engine::WindowCloseEvent& pEvent);
     bool OnWindowResize(const Engine::WindowResizeEvent& pEvent);
 
+    void GameUpdate(float dt);
+
     ApplicationSpecification m_Specification;
 
     bool m_IsRunning = true;
@@ -59,5 +61,4 @@ private:
     std::unique_ptr<Engine::DirectXMesh> m_Triangle2; 
 
     static Application* s_Instance;
-    
 };

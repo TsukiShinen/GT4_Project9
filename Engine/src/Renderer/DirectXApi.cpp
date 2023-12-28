@@ -77,6 +77,11 @@ namespace Engine
             DirectXContext::Get()->m_CommandObject->GetCurrentFenceIndex());
     }
 
+    void DirectXApi::UpdateCamera(float dt)
+    {
+        DirectXContext::Get()->m_Camera->GameUpdate(dt);
+    }
+
     void DirectXApi::InitializeDebug()
     {
 #if defined(DEBUG) || defined(_DEBUG)
