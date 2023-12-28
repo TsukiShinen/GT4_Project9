@@ -29,8 +29,6 @@ namespace Engine
 		void SetTransformMatrix(DirectX::XMFLOAT4X4 transformMatrix);
 
 		[[nodiscard]] UploadBuffer<ObjectConstants>& GetConstantBuffer() const { return *m_ConstantBuffer; }
-		[[nodiscard]] Texture* GetTexture() { return m_Texture; }
-		void SetTexture(Texture* pTexture) { m_Texture = pTexture; }
 
 	private:
 		DirectX::XMFLOAT4X4 m_TransformMatrix = MathHelper::Identity4x4();
@@ -52,8 +50,6 @@ namespace Engine
 		DirectXMaterial* m_Material;
 
 		std::unique_ptr<UploadBuffer<ObjectConstants>> m_ConstantBuffer = nullptr;
-
-		Texture* m_Texture;
 	};
 
 	template <typename T, typename>
@@ -92,8 +88,9 @@ namespace Engine
 		m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
 		m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
 		m_IndexBuffer.SizeInBytes = indicesByteSize;
-
+		
+		/* Create a crash a end of application
 		m_VertexBufferUploader->Release();
-		m_IndexBufferUploader->Release();
+		m_IndexBufferUploader->Release();*/
 	}
 }

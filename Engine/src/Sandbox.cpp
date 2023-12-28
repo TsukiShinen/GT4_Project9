@@ -45,7 +45,7 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 			indices.push_back(i);
 		}
 		m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices,
-		                                               (Engine::DirectXMaterial*)m_BingusMaterial.get());
+		                                               static_cast<Engine::DirectXMaterial*>(m_BingusMaterial.get()));
 
 
 		std::vector vertices3{
@@ -55,7 +55,7 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 		};
 		std::vector<uint16_t> indices3 = {0, 1, 2};
 		m_Triangle1 = std::make_unique<Engine::DirectXMesh>(vertices3, indices3,
-		                                                    (Engine::DirectXMaterial*)m_TextureMaterial.get());
+		                                                    static_cast<Engine::DirectXMaterial*>(m_TextureMaterial.get()));
 
 
 		std::vector vertices2 = {
@@ -65,7 +65,7 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 		};
 		std::vector<uint16_t> indices2 = {0, 1, 2};
 		m_Triangle2 = std::make_unique<Engine::DirectXMesh>(vertices2, indices2,
-		                                                    (Engine::DirectXMaterial*)m_SimpleMaterial.get());
+		                                                    static_cast<Engine::DirectXMaterial*>(m_SimpleMaterial.get()));
 }
 
 void Sandbox::Update(const Engine::Timestep pDeltaTime)
