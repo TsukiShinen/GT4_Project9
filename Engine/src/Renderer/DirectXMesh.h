@@ -34,9 +34,6 @@ namespace Engine
         int m_NumFramesDirty = gNumFrameResources;
         
         D3D12_PRIMITIVE_TOPOLOGY m_PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-        Microsoft::WRL::ComPtr<ID3DBlob> m_VertexBufferCpu;
-        Microsoft::WRL::ComPtr<ID3DBlob> m_IndexBufferCpu;
         
         Microsoft::WRL::ComPtr<ID3D12Resource> m_VertexBufferGpu;
         Microsoft::WRL::ComPtr<ID3D12Resource> m_IndexBufferGpu;
@@ -68,12 +65,6 @@ namespace Engine
 
         const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
         const auto indicesByteSize = static_cast<UINT>(pIndices.size()) * sizeof(uint16_t);
-        
-        ThrowIfFailed(D3DCreateBlob(verticesByteSize, &m_VertexBufferCpu));
-        CopyMemory(m_VertexBufferCpu->GetBufferPointer(), pVertices.data(), verticesByteSize);
-
-        ThrowIfFailed(D3DCreateBlob(indicesByteSize, &m_IndexBufferCpu));
-        CopyMemory(m_IndexBufferCpu->GetBufferPointer(), pIndices.data(), indicesByteSize);
 
         m_VertexBufferGpu = d3dUtil::CreateDefaultBuffer(
             DirectXContext::Get()->m_Device.Get(),
@@ -85,6 +76,9 @@ namespace Engine
             DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize,
             m_IndexBufferUploader);
 
+        DirectXContext::Get()->m_CommandObject->Execute();
+        DirectXContext::Get()->m_CommandObject->Flush();
+
         m_VertexBuffer.BufferLocation = m_VertexBufferGpu->GetGPUVirtualAddress();
         m_VertexBuffer.StrideInBytes = sizeof(T);
         m_VertexBuffer.SizeInBytes = verticesByteSize;
@@ -92,8 +86,8 @@ namespace Engine
         m_IndexBuffer.BufferLocation = m_IndexBufferGpu->GetGPUVirtualAddress();
         m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
         m_IndexBuffer.SizeInBytes = indicesByteSize;
-
-        DirectXContext::Get()->m_CommandObject->Execute();
-        DirectXContext::Get()->m_CommandObject->Flush();
+        
+        m_VertexBufferUploader->Release();
+        m_IndexBufferUploader->Release();
     }
 }
