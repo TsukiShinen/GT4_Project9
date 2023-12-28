@@ -111,7 +111,7 @@ namespace Engine
 	{
 #if defined(DEBUG) || defined(_DEBUG)
         Microsoft::WRL::ComPtr<ID3D12Debug> debugController;
-        ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
+        THROW_IF_FAILED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
         debugController->EnableDebugLayer();
 #endif
 	}
