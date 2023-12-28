@@ -58,8 +58,19 @@ namespace Engine
 
         DirectXContext::Get()->m_Camera->Update();
 
-        const auto currPassCb = DirectXContext::Get()->CurrentFrameData().PassCB.get();
-        currPassCb->CopyData(0, DirectXContext::Get()->m_Camera->m_MainPassCB);
+        // --- TODO : Refactor this !!!
+        DirectXContext::Get()->CurrentFrameData().SetViewProj(DirectXContext::Get()->m_Camera->m_ViewProjT);
+        DirectX::XMFLOAT3 pos;
+        DirectX::XMStoreFloat3(&pos, DirectXContext::Get()->m_Camera->m_Transform->GetPosition());
+        DirectXContext::Get()->CurrentFrameData().SetEyePosition(pos);
+        DirectionalLight light = DirectionalLight();
+        light.Direction = { 0.57735f, 0.57735f, -0.57735f };
+        light.Strength = { 1.f,  1.f,  1.f };
+        DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(0, light);
+        DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(1);
+        // ---
+
+        DirectXContext::Get()->CurrentFrameData().Update();
     }
 
     void DirectXApi::EndFrame()

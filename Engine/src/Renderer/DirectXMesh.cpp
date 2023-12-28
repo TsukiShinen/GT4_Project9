@@ -2,7 +2,7 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXContext.h"
-#include "Shaders/DirectXShader.h"
+#include "Materials/DirectXMaterial.h"
 
 namespace Engine
 {
@@ -20,7 +20,7 @@ namespace Engine
             m_NumFramesDirty--;
         }
 
-        m_Shader->Bind(this);
+        m_Material->Bind(this);
         
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetVertexBuffers(0, 1, &m_VertexBuffer);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->IASetIndexBuffer(&m_IndexBuffer);

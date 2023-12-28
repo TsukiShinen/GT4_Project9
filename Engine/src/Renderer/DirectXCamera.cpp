@@ -5,11 +5,9 @@ namespace Engine
     DirectXCamera::DirectXCamera(float width, float height, float fovDegree, float nearZ, float farZ)
         : m_FovDegree(fovDegree), m_NearZ(nearZ), m_FarZ(farZ)
     {
-        m_transform = std::make_unique<Transform>(DirectX::XMFLOAT3(0.f, 0.f, -2.f));
+        m_Transform = std::make_unique<Transform>(DirectX::XMFLOAT3(0.f, 0.f, -2.f));
 
-        //DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(m_transform->GetPosition(), m_transform->GetForwardVector(), m_transform->GetUpVector());
-        
-        DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixInverse(nullptr,m_transform->GetWorld());
+        DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixInverse(nullptr, m_Transform->GetWorld());
 
         XMStoreFloat4x4(&m_View, viewMatrix);
 
@@ -31,14 +29,14 @@ namespace Engine
 
     void DirectXCamera::Update()
     {
-        //const DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(m_transform->GetPosition(), DirectX::XMVectorAdd(m_transform->GetPosition(),m_transform->GetForwardVector()), m_transform->GetUpVector());
-        DirectX::XMMATRIX view = DirectX::XMMatrixInverse(nullptr, m_transform->GetWorld());
+        DirectX::XMMATRIX view = DirectX::XMMatrixInverse(nullptr, m_Transform->GetWorld());
 
         const DirectX::XMMATRIX proj = XMLoadFloat4x4(&m_Proj);
 
         const DirectX::XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-        XMStoreFloat4x4(&m_MainPassCB.ViewProj, XMMatrixTranspose(viewProj));
+        XMStoreFloat4x4(&m_ViewProj, viewProj);
+        XMStoreFloat4x4(&m_ViewProjT, XMMatrixTranspose(viewProj));
     }
 
     void DirectXCamera::GameUpdate(float dt)
@@ -72,40 +70,40 @@ namespace Engine
 
     void DirectXCamera::MoveZAxis(float dt, float value)
     {
-        DirectX::XMVECTOR forward = m_transform->GetForwardVector();
+        DirectX::XMVECTOR forward = m_Transform->GetForwardVector();
         DirectX::XMVECTOR s = DirectX::XMVectorReplicate(dt * value);
-        DirectX::XMVECTOR position = m_transform->GetPosition();
+        DirectX::XMVECTOR position = m_Transform->GetPosition();
         DirectX::XMVECTOR newPos = DirectX::XMVectorMultiplyAdd(s, forward, position);
 
         DirectX::XMFLOAT3 p; 
 
         DirectX::XMStoreFloat3(&p, newPos);
 
-        m_transform->SetPosition(p);
+        m_Transform->SetPosition(p);
     }
 
     void DirectXCamera::MoveXAxis(float dt, float value)
     {
-        DirectX::XMVECTOR right = m_transform->GetRightVector();
+        DirectX::XMVECTOR right = m_Transform->GetRightVector();
         DirectX::XMVECTOR s = DirectX::XMVectorReplicate(dt * value);
-        DirectX::XMVECTOR position = m_transform->GetPosition();
+        DirectX::XMVECTOR position = m_Transform->GetPosition();
         DirectX::XMVECTOR newPos = DirectX::XMVectorMultiplyAdd(s, right, position);
 
         DirectX::XMFLOAT3 p;
 
         DirectX::XMStoreFloat3(&p, newPos);
 
-        m_transform->SetPosition(p);
+        m_Transform->SetPosition(p);
     }
 
     void DirectXCamera::Pitch(float dt, float value)
     {
-        m_transform->Rotate(0.f, dt * value , 0.f);
+        m_Transform->Rotate(0.f, dt * value , 0.f);
     }
 
     void DirectXCamera::Rotate(float dt, float value)
     {
-        m_transform->Rotate(dt * value, 0.f, 0.f);
+        m_Transform->Rotate(dt * value, 0.f, 0.f);
     }
 
 }
