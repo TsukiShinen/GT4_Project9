@@ -8,7 +8,7 @@
 
 namespace Engine
 {
-	void ObjLoader::LoadObj(const char* filePath, std::vector<Vertex>* objVertices)
+	void ObjLoader::LoadObj(const char* filePath, std::vector<VertexLit>* objVertices)
 	{
 		File file{};
 		bool hasBeenOpened = FilesSystem::TryOpen(filePath, FileModeRead, false, &file);
@@ -103,7 +103,7 @@ namespace Engine
 			DirectX::XMFLOAT2 uv = uvs[face_uv_index[i] - 1];
 			DirectX::XMFLOAT3 normal = vertices[face_normal_index[i] - 1];
 
-			objVertices->push_back({ vertex , normal });
+			objVertices->push_back({ vertex, uv, normal });
 		}
 	}
 }

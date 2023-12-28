@@ -15,6 +15,8 @@ namespace Engine
         static void BeginFrame();
         static void EndFrame();
 
+        static void UpdateCamera(float dt);
+
     private:
         static void InitializeDebug();
         static void LogAdapters();

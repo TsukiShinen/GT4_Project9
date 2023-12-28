@@ -1,11 +1,18 @@
 ﻿#include "DirectXContext.h"
 
 #include "DirectXCommandObject.h"
-#include "DirectXShader.h"
-#include "DirectXMaterial.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 #include "DirectXCamera.h"
+#include "Resource/DirectXResourceManager.h"
+
+#include "Shaders/DirectXSimpleShader.h"
+#include "Shaders/DirectXTextureShader.h"
+#include "Shaders/DirectXLitShader.h"
+
+#include "Materials/DirectXMaterial.h"
+#include "Materials/DirectXTextureMaterial.h"
+#include "Materials/DirectXLitMaterial.h"
 
 const int gNumFrameResources = 3;
 
@@ -40,14 +47,12 @@ namespace Engine
                                                                      Application::Get()->GetWindow()->GetHeight());
         s_Instance->m_Swapchain->Resize(Application::Get()->GetWindow()->GetWidth(),
                                         Application::Get()->GetWindow()->GetHeight());
-
-        std::vector<D3D12_INPUT_ELEMENT_DESC> layout = {
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
-        };
-        s_Instance->m_BaseShader = std::make_unique<DirectXShader>(layout, L"Shaders\\color.hlsl");
-        s_Instance->m_BaseMaterial = std::make_unique<DirectXMaterial>();
-
+        s_Instance->m_ResourceManager = std::make_unique<DirectXResourceManager>(1000);
+        /*
+        s_Instance->m_BaseShader = std::make_shared<DirectXSimpleShader>(VertexColor::GetLayout(), L"Shaders\\color.hlsl");
+        s_Instance->m_TextureShader = std::make_shared<DirectXTextureShader>(VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
+        s_Instance->m_LitShader = std::make_shared<DirectXLitShader>(VertexTex::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
+        */
         // ===== Frame Resources =====
         for(int i = 0; i < gNumFrameResources; ++i)
         {
@@ -58,6 +63,16 @@ namespace Engine
     void DirectXContext::Shutdown()
     {
     }
+    /*
+    std::shared_ptr<DirectXShader> DirectXContext::GetBaseShader() const
+    {
+        return m_BaseShader;
+    }
+
+    std::shared_ptr<DirectXShader> DirectXContext::GetTextureShader() const
+    {
+        return m_TextureShader;
+    }*/
 
 
     void DirectXContext::InitializeMsaa()

@@ -31,11 +31,62 @@ namespace Engine
 
         alignas(16) DirectionalLight DirectionalLights[10];
     };
+    
+    struct Vertex {};
 
-    struct Vertex
+    struct VertexColor : Vertex
     {
         DirectX::XMFLOAT3 Position;
+        DirectX::XMFLOAT4 Color{1, 1, 1, 1};
+
+        VertexColor(const DirectX::XMFLOAT3 pPosition)
+            : Vertex(), Position(pPosition) {}
+        VertexColor(const DirectX::XMFLOAT3 pPosition, const DirectX::XMFLOAT4 pColor)
+            : Vertex(), Position(pPosition), Color(pColor) {}
+
+        static std::vector<D3D12_INPUT_ELEMENT_DESC> GetLayout()
+        {
+            return {
+                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+                {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+            };
+        }
+    };
+
+    struct VertexTex : Vertex
+    {
+        DirectX::XMFLOAT3 Position;
+        DirectX::XMFLOAT2 TexCoord;
+        
+        VertexTex(const DirectX::XMFLOAT3 pPosition, const DirectX::XMFLOAT2 pTexCoord)
+            : Vertex(), Position(pPosition), TexCoord(pTexCoord) {}
+
+        static std::vector<D3D12_INPUT_ELEMENT_DESC> GetLayout()
+        {
+            return {
+                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+                {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+            };
+        }
+    };
+
+    struct VertexLit : Vertex
+    {
+        DirectX::XMFLOAT3 Position;
+        DirectX::XMFLOAT2 TexCoord;
         DirectX::XMFLOAT3 Normal;
+
+        VertexLit(const DirectX::XMFLOAT3 pPosition, const DirectX::XMFLOAT2 pTexCoord, const DirectX::XMFLOAT3 pNormal)
+            : Vertex(), Position(pPosition), TexCoord(pTexCoord), Normal(pNormal) {}
+
+        static std::vector<D3D12_INPUT_ELEMENT_DESC> GetLayout()
+        {
+            return {
+                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+                {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+                {"NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+            };
+        }
     };
     
     struct DirectXFrameData

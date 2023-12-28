@@ -10,7 +10,7 @@ namespace Engine
 	class ObjLoader
 	{
 	public:
-		static void LoadObj(const char* filePath, std::vector<Vertex>* objVertices);
+		static void LoadObj(const char* filePath, std::vector<VertexLit>* objVertices);
 
 	};
 }

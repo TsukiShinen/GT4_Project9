@@ -3,11 +3,10 @@
 #include <iostream>
 
 #include "DirectXCommandObject.h"
-#include "DirectXShader.h"
-#include "DirectXMaterial.h"
 #include "DirectXCamera.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
+#include "Resource/DirectXResourceManager.h"
 
 namespace Engine
 {
@@ -49,6 +48,8 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearRenderTargetView(DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView(), DirectX::Colors::Gray, 0, nullptr);
         DirectXContext::Get()->m_CommandObject->GetCommandList()->ClearDepthStencilView(DirectXContext::Get()->m_Swapchain->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
+        DirectXContext::Get()->m_ResourceManager->BindDescriptorsHeap();
+        
         const auto renderTargetDescriptor = DirectXContext::Get()->m_Swapchain->GetCurrentBackBufferView();
         const auto depthStencilDescriptor = DirectXContext::Get()->m_Swapchain->GetDepthStencilView();
         DirectXContext::Get()->m_CommandObject->GetCommandList()->OMSetRenderTargets(1,
@@ -57,22 +58,19 @@ namespace Engine
 
         DirectXContext::Get()->m_Camera->Update();
 
-        DirectXContext::Get()->m_BaseShader->Begin();
-        DirectXContext::Get()->m_BaseMaterial->Bind();
-
-
+        // --- TODO : Refactor this !!!
         DirectXContext::Get()->CurrentFrameData().SetViewProj(DirectXContext::Get()->m_Camera->m_ViewProjT);
-        DirectXContext::Get()->CurrentFrameData().SetEyePosition(DirectXContext::Get()->m_Camera->m_EyePosition);
+        DirectX::XMFLOAT3 pos;
+        DirectX::XMStoreFloat3(&pos, DirectXContext::Get()->m_Camera->m_Transform->GetPosition());
+        DirectXContext::Get()->CurrentFrameData().SetEyePosition(pos);
         DirectionalLight light = DirectionalLight();
         light.Direction = { 0.57735f, 0.57735f, -0.57735f };
         light.Strength = { 1.f,  1.f,  1.f };
         DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(0, light);
         DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(1);
-
-        auto test = DirectXContext::Get()->CurrentFrameData().m_Constants;
+        // ---
 
         DirectXContext::Get()->CurrentFrameData().Update();
-        DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(1, DirectXContext::Get()->CurrentFrameData().PassCB->Resource()->GetGPUVirtualAddress());
     }
 
     void DirectXApi::EndFrame()
@@ -88,6 +86,11 @@ namespace Engine
         DirectXContext::Get()->m_CommandObject->GetCommandQueue()->Signal(
             DirectXContext::Get()->m_CommandObject->GetFence().Get(),
             DirectXContext::Get()->m_CommandObject->GetCurrentFenceIndex());
+    }
+
+    void DirectXApi::UpdateCamera(float dt)
+    {
+        DirectXContext::Get()->m_Camera->GameUpdate(dt);
     }
 
     void DirectXApi::InitializeDebug()

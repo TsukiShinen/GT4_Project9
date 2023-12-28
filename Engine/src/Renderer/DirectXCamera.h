@@ -1,6 +1,9 @@
 #pragma once
 
 #include "DirectXContext.h"
+#include "Core/Transform.h"
+#include "Platform/Input.h"
+#include "Debug/Log.h"
 
 namespace Engine
 {
@@ -15,14 +18,23 @@ namespace Engine
 
 		void Update();
 
+		void GameUpdate(float dt);
+
+		void MoveZAxis(float dt, float value);
+
+		void MoveXAxis(float dt, float value);
+
+		void Pitch(float dt, float value);
+
+		void Rotate(float dt, float value);
+
+
 	private:
-		PassConstants m_MainPassCB;
+		std::unique_ptr<Transform> m_Transform;
 
 		float m_FovDegree;
 		float m_NearZ;
 		float m_FarZ;
-
-		DirectX::XMFLOAT3 m_EyePosition = { 0.0f, 0.0f, 0.0f };
 
 		DirectX::XMFLOAT4X4 m_View = MathHelper::Identity4x4();
 		DirectX::XMFLOAT4X4 m_Proj = MathHelper::Identity4x4();
