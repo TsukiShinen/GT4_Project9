@@ -1,9 +1,11 @@
 ﻿#pragma once
 #include <DirectXMath.h>
 
+#include "DirectXCamera.h"
 #include "DirectXCommandObject.h"
 #include "DirectXContext.h"
 #include "DirectXFrameData.h"
+#include "DirectXSwapchain.h"
 #include "MathHelper.h"
 #include "Resource/Texture.h"
 
@@ -33,7 +35,7 @@ namespace Engine
     private:
         DirectX::XMFLOAT4X4 m_TransformMatrix = MathHelper::Identity4x4();
         
-        int m_NumFramesDirty = gNumFrameResources;
+        int m_NumFramesDirty = DirectXSwapchain::k_SwapChainBufferCount;
         
         D3D12_PRIMITIVE_TOPOLOGY m_PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
         
@@ -68,12 +70,12 @@ namespace Engine
         const auto verticesByteSize = static_cast<UINT>(pVertices.size()) * sizeof(T);
         const auto indicesByteSize = static_cast<UINT>(pIndices.size()) * sizeof(uint16_t);
 
-        m_VertexBufferGpu = d3dUtil::CreateDefaultBuffer(
+        m_VertexBufferGpu = DirectXContext::CreateDefaultBuffer(
             DirectXContext::Get()->m_Device.Get(),
             DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pVertices.data(), verticesByteSize,
             m_VertexBufferUploader);
 
-        m_IndexBufferGpu = d3dUtil::CreateDefaultBuffer(
+        m_IndexBufferGpu = DirectXContext::CreateDefaultBuffer(
             DirectXContext::Get()->m_Device.Get(),
             DirectXContext::Get()->m_CommandObject->GetCommandList().Get(), pIndices.data(), indicesByteSize,
             m_IndexBufferUploader);

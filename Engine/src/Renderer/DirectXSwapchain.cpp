@@ -26,7 +26,7 @@ namespace Engine
         swapchainInfo.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         swapchainInfo.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-        ThrowIfFailed(DirectXContext::Get()->m_Factory->CreateSwapChain(
+        THROW_IF_FAILED(DirectXContext::Get()->m_Factory->CreateSwapChain(
             DirectXContext::Get()->m_CommandObject->GetCommandQueue().Get(),
             &swapchainInfo, 
             m_Swapchain.GetAddressOf()));
@@ -57,7 +57,7 @@ namespace Engine
     	// Flush before changing any resources.
 		DirectXContext::Get()->m_CommandObject->Flush();
 
-	    ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator()));
+	    THROW_IF_FAILED(DirectXContext::Get()->m_CommandObject->ResetList(DirectXContext::Get()->m_CommandObject->GetCommandAllocator()));
 
 		// Release the previous resources we will be recreating.
 		for (int i = 0; i < k_SwapChainBufferCount; ++i)
@@ -65,7 +65,7 @@ namespace Engine
 	    m_DepthStencilBuffer.Reset();
 		
 		// Resize the swap chain.
-	    ThrowIfFailed(m_Swapchain->ResizeBuffers(
+	    THROW_IF_FAILED(m_Swapchain->ResizeBuffers(
 			k_SwapChainBufferCount, 
 			pWidth, pHeight, 
 			k_BackBufferFormat, 
@@ -76,7 +76,7 @@ namespace Engine
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(m_RenderTargetDescriptor->GetCPUDescriptorHandleForHeapStart());
 		for (UINT i = 0; i < k_SwapChainBufferCount; i++)
 		{
-			ThrowIfFailed(m_Swapchain->GetBuffer(i, IID_PPV_ARGS(&m_SwapchainBuffers[i])));
+			THROW_IF_FAILED(m_Swapchain->GetBuffer(i, IID_PPV_ARGS(&m_SwapchainBuffers[i])));
 			DirectXContext::Get()->m_Device->CreateRenderTargetView(m_SwapchainBuffers[i].Get(), nullptr, rtvHeapHandle);
 			rtvHeapHandle.Offset(1, m_RenderTargetDescriptorSize);
 		}
@@ -101,7 +101,7 @@ namespace Engine
 	    optClear.DepthStencil.Depth = 1.0f;
 	    optClear.DepthStencil.Stencil = 0;
     	auto properties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-	    ThrowIfFailed(DirectXContext::Get()->m_Device->CreateCommittedResource(
+	    THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateCommittedResource(
 	        &properties,
 			D3D12_HEAP_FLAG_NONE,
 	        &depthStencilDesc,
@@ -141,7 +141,7 @@ namespace Engine
 
     void DirectXSwapchain::Present()
     {
-    	ThrowIfFailed(m_Swapchain->Present(0, 0));
+    	THROW_IF_FAILED(m_Swapchain->Present(0, 0));
     	m_CurrentBackBuffer = (m_CurrentBackBuffer + 1) % k_SwapChainBufferCount;
 
     	// Wait until frame commands are complete.  This waiting is inefficient and is
@@ -162,7 +162,7 @@ namespace Engine
     	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     	rtvHeapDesc.NodeMask = 0;
-    	ThrowIfFailed(DirectXContext::Get()->m_Device->CreateDescriptorHeap(
+    	THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateDescriptorHeap(
 			&rtvHeapDesc, IID_PPV_ARGS(m_RenderTargetDescriptor.GetAddressOf())));
 
 
@@ -171,7 +171,7 @@ namespace Engine
     	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
     	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     	dsvHeapDesc.NodeMask = 0;
-    	ThrowIfFailed(DirectXContext::Get()->m_Device->CreateDescriptorHeap(
+    	THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateDescriptorHeap(
 			&dsvHeapDesc, IID_PPV_ARGS(m_DepthStencilDescriptor.GetAddressOf())));
     }
 }

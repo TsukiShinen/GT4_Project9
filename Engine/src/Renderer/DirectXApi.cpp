@@ -4,6 +4,7 @@
 
 #include "DirectXCommandObject.h"
 #include "DirectXCamera.h"
+#include "DirectXContext.h"
 #include "DirectXSwapchain.h"
 #include "Core/Application.h"
 #include "Resource/DirectXResourceManager.h"
@@ -33,8 +34,8 @@ namespace Engine
     void DirectXApi::BeginFrame()
     {
         auto& cmdListAlloc = DirectXContext::Get()->CurrentFrameData().CmdListAlloc;
-        ThrowIfFailed(cmdListAlloc->Reset());
-        ThrowIfFailed(DirectXContext::Get()->m_CommandObject->ResetList(cmdListAlloc));
+        THROW_IF_FAILED(cmdListAlloc->Reset());
+        THROW_IF_FAILED(DirectXContext::Get()->m_CommandObject->ResetList(cmdListAlloc));
 
         DirectXContext::Get()->m_CommandObject->GetCommandList()->RSSetViewports(1, &DirectXContext::Get()->m_Swapchain->GetViewport());
         DirectXContext::Get()->m_CommandObject->GetCommandList()->RSSetScissorRects(1, &DirectXContext::Get()->m_Swapchain->GetScissorRect());

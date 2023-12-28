@@ -1,5 +1,6 @@
 ﻿#include "DirectXTextureShader.h"
 
+#include <array>
 #include <comdef.h>
 
 #include "../DirectXSwapchain.h"
@@ -13,8 +14,8 @@ namespace Engine
 
     DirectXTextureShader::DirectXTextureShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
     {
-        const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
-        const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
+        const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = DirectXContext::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
+        const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = DirectXContext::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
 
         InitializeSignature();
 

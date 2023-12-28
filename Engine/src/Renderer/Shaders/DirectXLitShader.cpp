@@ -1,5 +1,6 @@
 #include "DirectXLitShader.h"
 
+#include <array>
 #include <comdef.h>
 
 #include "../DirectXSwapchain.h"
@@ -11,8 +12,8 @@ namespace Engine
 
     DirectXLitShader::DirectXLitShader(const std::vector<D3D12_INPUT_ELEMENT_DESC>& pLayout, const std::wstring& pShaderPath)
     {
-        const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
-        const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = d3dUtil::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
+        const Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = DirectXContext::CompileShader(pShaderPath, nullptr, "VS", "vs_5_0");
+        const Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = DirectXContext::CompileShader(pShaderPath, nullptr, "PS", "ps_5_0");
 
         InitializeSignature();
 
@@ -55,9 +56,9 @@ namespace Engine
         {
             CORE_ERROR(static_cast<char*>(errorBlob->GetBufferPointer()));
         }
-        ThrowIfFailed(hr);
+        THROW_IF_FAILED(hr);
 
-        ThrowIfFailed(DirectXContext::Get()->m_Device->CreateRootSignature(
+        THROW_IF_FAILED(DirectXContext::Get()->m_Device->CreateRootSignature(
             0,
             serializedRootSig->GetBufferPointer(),
             serializedRootSig->GetBufferSize(),

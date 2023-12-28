@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
+#include "DirectXContext.h"
 #include "UploadBuffer.h"
 
 namespace Engine
@@ -85,7 +86,7 @@ namespace Engine
     {
         DirectXFrameData(ID3D12Device* pDevice, UINT pPassCount)
         {
-            ThrowIfFailed(pDevice->CreateCommandAllocator(
+            THROW_IF_FAILED(pDevice->CreateCommandAllocator(
                 D3D12_COMMAND_LIST_TYPE_DIRECT,
                 IID_PPV_ARGS(CmdListAlloc.GetAddressOf())));
 

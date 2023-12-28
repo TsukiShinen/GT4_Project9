@@ -1,5 +1,7 @@
 ﻿#include "DirectXShader.h"
 
+#include <array>
+
 #include "Renderer/DirectXContext.h"
 
 namespace Engine

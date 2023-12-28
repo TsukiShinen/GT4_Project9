@@ -3,6 +3,7 @@
 #include "DirectXMaterial.h"
 #include "Renderer/Resource/Texture.h"
 #include "Renderer/DirectXContext.h"
+#include "Renderer/UploadBuffer.h"
 
 namespace Engine
 {
