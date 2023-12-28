@@ -2,20 +2,26 @@
 
 #include "Renderer/Shaders/DirectXShader.h"
 #include "Renderer/DirectXContext.h"
+#include "Renderer/Resource/DirectXResourceManager.h"
 #include "Renderer/DirectXCommandObject.h"
 
 namespace Engine
 {
 	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader)
-		: m_Data(), DirectXMaterial((DirectXShader*)shader)
+		: m_Data(), DirectXMaterial((DirectXShader*)shader), m_Texture(nullptr)
 	{
 		m_MatCB = std::make_unique<UploadBuffer<LitMaterialConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
 	}
 
-	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 diffuseAlbedo, DirectX::XMFLOAT3 fresnelR0, float roughness)
-		: m_Data(diffuseAlbedo, fresnelR0, roughness), DirectXMaterial((DirectXShader*)shader)
+	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo, DirectX::XMFLOAT4 specular, float smoothness, Texture* texture)
+		: m_Data(albedo, specular, smoothness), DirectXMaterial((DirectXShader*)shader), m_Texture(texture)
 	{
 		m_MatCB = std::make_unique<UploadBuffer<LitMaterialConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
+	}
+
+	void DirectXLitMaterial::SetTexture(Texture* texture)
+	{
+		m_Texture = texture;
 	}
 
 	void DirectXLitMaterial::Bind(DirectXMesh* mesh)
@@ -29,5 +35,7 @@ namespace Engine
 		m_Shader->Bind(mesh);
 
 		DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootConstantBufferView(2, m_MatCB->Resource()->GetGPUVirtualAddress());
+		if (m_Texture != nullptr)
+			DirectXContext::Get()->m_CommandObject->GetCommandList()->SetGraphicsRootDescriptorTable(3, DirectXContext::Get()->m_ResourceManager->GetTextureHandle(m_Texture));
 	}
 }

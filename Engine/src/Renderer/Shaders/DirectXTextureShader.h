@@ -19,7 +19,7 @@ namespace Engine
                                      Microsoft::WRL::ComPtr<ID3DBlob> pPsByteCode);
 
 
-        static std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+        
     };
     
 }

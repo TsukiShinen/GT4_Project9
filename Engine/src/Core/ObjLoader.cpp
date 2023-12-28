@@ -48,6 +48,7 @@ namespace Engine
 				std::istringstream ss(line.substr(3));
 				float u, v;
 				ss >> u >> v;
+				v = 1 - v;
 				uvs.push_back(DirectX::XMFLOAT2(u, v));
 			}
 

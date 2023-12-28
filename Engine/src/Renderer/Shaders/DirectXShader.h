@@ -15,6 +15,9 @@ namespace Engine
         virtual void Bind(DirectXMesh* pMesh) = 0;
 
     protected:
+        
+        static std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+        
         Microsoft::WRL::ComPtr<ID3D12RootSignature> m_RootSignature = nullptr;
         Microsoft::WRL::ComPtr<ID3D12PipelineState> m_PipelineState;
     };

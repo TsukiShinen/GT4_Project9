@@ -38,22 +38,27 @@ Application::Application(const ApplicationSpecification& pSpecification)
 	s_Instance->m_TextureShader = std::make_unique<Engine::DirectXTextureShader>(Engine::VertexTex::GetLayout(), L"Shaders\\Builtin.Texture.hlsl");
 	s_Instance->m_LitShader = std::make_unique<Engine::DirectXLitShader>(Engine::VertexLit::GetLayout(), L"Shaders\\Builtin.Lit.hlsl");
 
+	// Texture
+	Engine::Texture* stone = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
+	Engine::Texture* bingus = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\bingus.dds", "Bingus");
+
 	// Materials
 	s_Instance->m_SimpleMaterial = std::make_unique<Engine::DirectXSimpleMaterial>(s_Instance->m_SimpleShader.get());
-	Engine::Texture* tex = Engine::DirectXContext::Get()->GetResourceManager().LoadTexture(L"Textures\\stone.dds", "Stone");
-	s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(s_Instance->m_TextureShader.get(), tex);
+	s_Instance->m_TextureMaterial = std::make_unique<Engine::DirectXTextureMaterial>(s_Instance->m_TextureShader.get(), stone);
 	s_Instance->m_LitMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
+	s_Instance->m_BingusMaterial = std::make_unique<Engine::DirectXLitMaterial>(s_Instance->m_LitShader.get());
+	s_Instance->m_BingusMaterial->SetTexture(bingus);
 
 	// Init objects
 	
 	std::vector<Engine::VertexLit> vertices;
-	Engine::ObjLoader::LoadObj(".\\Objs\\untitled.obj", &vertices);
+	Engine::ObjLoader::LoadObj(".\\Objs\\bingus.obj", &vertices);
 	std::vector<uint16_t> indices;
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		indices.push_back(i);
 	}
-	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices, (Engine::DirectXMaterial*)s_Instance->m_LitMaterial.get());
+	m_Cube = std::make_unique<Engine::DirectXMesh>(vertices, indices, (Engine::DirectXMaterial*)s_Instance->m_BingusMaterial.get());
 	
 	
 	std::vector vertices3 {
@@ -104,8 +109,8 @@ void Application::Run()
 
 			Engine::DirectXApi::BeginFrame();
 			
-			m_Triangle1->Draw();
-			m_Triangle2->Draw();
+			//m_Triangle1->Draw();
+			//m_Triangle2->Draw();
 			m_Cube->Draw();
 			
 			Engine::DirectXApi::EndFrame();

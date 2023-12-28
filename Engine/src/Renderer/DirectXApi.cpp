@@ -64,8 +64,8 @@ namespace Engine
         DirectX::XMStoreFloat3(&pos, DirectXContext::Get()->m_Camera->m_Transform->GetPosition());
         DirectXContext::Get()->CurrentFrameData().SetEyePosition(pos);
         DirectionalLight light = DirectionalLight();
-        light.Direction = { 0.57735f, 0.57735f, -0.57735f };
-        light.Strength = { 1.f,  1.f,  1.f };
+        light.Direction = { 0.57735f, -0.57735f, 0.57735f };
+        light.Color = { 1.0f,  1.0f,  1.0f };
         DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(0, light);
         DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(1);
         // ---

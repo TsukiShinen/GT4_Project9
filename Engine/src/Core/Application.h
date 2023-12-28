@@ -64,6 +64,7 @@ private:
     std::unique_ptr<Engine::DirectXSimpleMaterial> m_SimpleMaterial;
     std::unique_ptr<Engine::DirectXTextureMaterial> m_TextureMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_LitMaterial;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_BingusMaterial;
 
     std::unique_ptr<Engine::DirectXMesh> m_Cube;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle1;
