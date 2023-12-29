@@ -14,8 +14,8 @@ namespace Engine
 	}
 
 	DirectXLitMaterial::DirectXLitMaterial(DirectXLitShader* shader, DirectX::XMFLOAT4 albedo,
-	                                       DirectX::XMFLOAT4 specular, float smoothness, Texture* texture)
-		: DirectXMaterial((DirectXShader*)shader), m_Data(albedo, specular, smoothness), m_Texture(texture)
+	                                       DirectX::XMFLOAT4 specular, float smoothness, float fresnel, Texture* texture)
+		: DirectXMaterial((DirectXShader*)shader), m_Data(albedo, specular, smoothness, fresnel), m_Texture(texture)
 	{
 		m_MatCB = std::make_unique<UploadBuffer<LitMaterialConstants>>(DirectXContext::Get()->m_Device.Get(), 1, true);
 	}

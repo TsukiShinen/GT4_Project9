@@ -72,9 +72,13 @@ namespace Engine
 		DirectXContext::Get()->CurrentFrameData().SetEyePosition(pos);
 		auto light = DirectionalLight();
 		light.Direction = {0.57735f, -0.57735f, 0.57735f};
-		light.Color = {1.0f, 1.0f, 1.0f};
+		light.Color = {0.0f, 0.0f, 1.0f};
 		DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(0, light);
-		DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(1);
+		auto light2 = DirectionalLight();
+		light2.Direction = { -0.57735f, -0.57735f, 0.57735f };
+		light2.Color = { 0.5f, 0.0f, 0.0f };
+		DirectXContext::Get()->CurrentFrameData().SetDirectionalLight(1, light2);
+		DirectXContext::Get()->CurrentFrameData().SetNumDirectionalLights(2);
 		// ---
 
 		DirectXContext::Get()->CurrentFrameData().Update();

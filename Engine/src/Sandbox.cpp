@@ -28,9 +28,9 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	m_LitMaterial = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get());
 	m_BingusMaterial = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get());
 	m_BingusMaterial->SetTexture(bingus);
-	m_StoneMaterial = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get());
+	m_StoneMaterial = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get(), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.2f, 0.04f);
 	m_StoneMaterial->SetTexture(stone);
-	m_StoneMaterial2 = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get(), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.5f);
+	m_StoneMaterial2 = std::make_unique<Engine::DirectXLitMaterial>(m_LitShader.get(), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 0.8f, 0.04f);
 	m_StoneMaterial2->SetTexture(stone);
 
 	// Init mesh

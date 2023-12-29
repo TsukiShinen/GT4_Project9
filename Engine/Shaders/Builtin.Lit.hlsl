@@ -1,11 +1,3 @@
-//***************************************************************************************
-// color.hlsl by Frank Luna (C) 2015 All Rights Reserved.
-//
-// Transforms and colors geometry.
-//***************************************************************************************
- 
-//#include "lighting.hlsl"
-
 struct DirectionalLight
 {
     float3 Color;
@@ -35,7 +27,8 @@ cbuffer cbMaterial : register(b2)
 {
 	float4 gAlbedo;
     float4 gSpecular;
-    float  gSpecularPower;
+    float  gSmoothness;
+    float  gFresnel;
 };
 
 
@@ -69,22 +62,40 @@ VertexOut VS(VertexIn vin)
     
     return vout;
 }
-/*
-float3 CalcDirectional(float3 position, Material material, float3 eyePosition, float3 lightDir)
+
+float G1V(float dotNV, float k)
 {
-   // Phong diffuse
-   float NDotL = dot(lightDir, material.normal);
-   float3 finalColor = DirLightColor.rgb * saturate(NDotL);
-   
-   // Blinn specular
-   float3 ToEye = eyePosition.xyz - position;
-   ToEye = normalize(ToEye);
-   float3 HalfWay = normalize(ToEye + lightDir);
-   float NDotH = saturate(dot(HalfWay, material.normal));
-   finalColor += DirLightColor.rgb * pow(NDotH, material.specExp) * material.specIntensity;
-   
-   return finalColor * material.diffuseColor.rgb;
-}*/
+    return 1.0f / (dotNV * (1.0f - k) + k);
+}
+
+float LightingGGX_REF(float3 N, float3 V, float3 L, float roughness, float F0)
+{
+    float alpha = roughness * roughness;
+
+    float3 H = normalize(V + L);
+
+    float dotNL = saturate(dot(N, L));
+    float dotNV = saturate(dot(N, V));
+    float dotNH = saturate(dot(N, H));
+    float dotLH = saturate(dot(L, H));
+
+    // D
+    float alphaSqr = alpha * alpha;
+    float pi = 3.14159f;
+    float denom = dotNH * dotNH * (alphaSqr - 1.0f) + 1.0f;
+    float D = alphaSqr / (pi * denom * denom);
+
+    // F
+    float dotLH5 = pow(1.0f - dotLH, 5);
+    float F = F0 + (1.0f - F0) * (dotLH5);
+
+    // V
+    float k = alpha / 2.0f;
+    float vis = G1V(dotNL, k) * G1V(dotNV, k);
+
+    float specular = dotNL * D * F * vis;
+    return specular;
+}
 
 float4 CalculateLighting(DirectionalLight light, VertexOut pin)
 {
@@ -93,23 +104,16 @@ float4 CalculateLighting(DirectionalLight light, VertexOut pin)
 
     float3 lightDir = -normalize(light.Direction);
     float3 normal = normalize(pin.NormalW);
+    float3 viewDir = normalize(gEyePosW - pin.PosW);
 
+    // diffuse
+    float diffuseFactor = max(dot(normal, lightDir), 0);
+    diffuseColor = float4(light.Color * diffuseFactor, 1.0f);
 
-    float diffuseFactor = dot(normal, lightDir);
+    // specular
     if (diffuseFactor > 0)
     {
-         diffuseColor = float4(light.Color * diffuseFactor, 1.0f);
-
-         float3 vertexToEye = normalize(gEyePosW - pin.PosW);
-         float3 lightReflect = normalize(reflect(light.Direction, normal));
-         
-         float specularFactor = dot(vertexToEye, lightReflect);
-
-         if (specularFactor > 0)
-         {
-            specularFactor = pow(specularFactor, gSpecularPower);
-            specularColor = float4(light.Color, 1.0f) * gSpecular * specularFactor;
-         }
+         specularColor = float4(float3(1, 1, 1) * LightingGGX_REF(normal, viewDir, lightDir, 1 - gSmoothness, gFresnel), 1);
     }
 
     return diffuseColor + specularColor;
@@ -126,6 +130,5 @@ float4 PS(VertexOut pin) : SV_Target
         specularDiffuseColor += CalculateLighting(gDirectionalLights[i], pin);
     }
 
-    return mainTexture.Sample(mainSample, pin.TexC) * gAlbedo * (ambientColor + specularDiffuseColor);
-    
+    return mainTexture.Sample(mainSample, pin.TexC) * gAlbedo * (ambientColor + specularDiffuseColor * gSpecular);
 }
