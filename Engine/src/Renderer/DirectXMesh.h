@@ -74,8 +74,7 @@ namespace Engine
 		m_IndexBuffer.Format = DXGI_FORMAT_R16_UINT;
 		m_IndexBuffer.SizeInBytes = indicesByteSize;
 		
-		/* Create a crash a end of application
-		m_VertexBufferUploader->Release();
-		m_IndexBufferUploader->Release();*/
+		m_VertexBufferUploader.Reset();
+		m_IndexBufferUploader.Reset();
 	}
 }
