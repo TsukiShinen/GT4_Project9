@@ -29,6 +29,8 @@ cbuffer cbMaterial : register(b2)
     float4 gSpecular;
     float  gSmoothness;
     float  gFresnel;
+
+    float2 gTiling;
 };
 
 
@@ -58,7 +60,7 @@ VertexOut VS(VertexIn vin)
     vout.NormalW = mul(vin.NormalL, (float3x3)gWorld);
     vout.PosH = mul(posW, gViewProj);
 
-    vout.TexC = vin.TexC;
+    vout.TexC = vin.TexC * gTiling;
     
     return vout;
 }

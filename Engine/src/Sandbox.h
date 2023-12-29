@@ -22,6 +22,7 @@ private:
     std::unique_ptr<Engine::DirectXLitMaterial> m_BingusMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial2;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_GroundMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_LitMaterials[10];
 
     std::unique_ptr<Engine::DirectXMesh> m_BingusMesh;
