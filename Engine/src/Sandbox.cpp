@@ -63,13 +63,16 @@ Sandbox::Sandbox(const Engine::ApplicationSpecification& pSpecification)
 	m_Ground = std::make_unique<Engine::Object>(DirectX::XMFLOAT3(0, -0.4f, 0), m_FaceMesh.get(), m_StoneMaterial.get());
 	m_Ground->GetTransform()->SetRotation(DirectX::XMFLOAT3(0, 0.0f, -DirectX::XMConvertToRadians(90)));
 	m_Ground->GetTransform()->SetScale(DirectX::XMFLOAT3(10, 10, 10));
+
+	m_Timer = 0;
 }
 
 void Sandbox::Update(const Engine::Timestep pDeltaTime)
 {
 	Application::Update(pDeltaTime);
 
-	m_BingusObject->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
+	m_Timer += pDeltaTime.GetSeconds();
+	m_BingusObject->GetTransform()->SetRotation(DirectX::XMFLOAT3(std::sin(m_Timer * 5) / 2, 90, 0));
 	m_BunnyObject->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
 	m_BunnyObject2->GetTransform()->Rotate(pDeltaTime.GetSeconds(), 0, 0);
 }
