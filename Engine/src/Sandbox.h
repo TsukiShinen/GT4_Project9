@@ -22,10 +22,13 @@ private:
     std::unique_ptr<Engine::DirectXLitMaterial> m_BingusMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial;
     std::unique_ptr<Engine::DirectXLitMaterial> m_StoneMaterial2;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_GroundMaterial;
+    std::unique_ptr<Engine::DirectXLitMaterial> m_LitMaterials[10];
 
     std::unique_ptr<Engine::DirectXMesh> m_BingusMesh;
     std::unique_ptr<Engine::DirectXMesh> m_BunnyMesh;
     std::unique_ptr<Engine::DirectXMesh> m_FaceMesh;
+    std::unique_ptr<Engine::DirectXMesh> m_SphereMesh;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle1;
     std::unique_ptr<Engine::DirectXMesh> m_Triangle2;
 
@@ -33,6 +36,7 @@ private:
     std::unique_ptr<Engine::Object> m_BunnyObject;
     std::unique_ptr<Engine::Object> m_BunnyObject2;
     std::unique_ptr<Engine::Object> m_Ground;
+    std::unique_ptr<Engine::Object> m_Spheres[10];
 
 	float m_Timer;
 };
