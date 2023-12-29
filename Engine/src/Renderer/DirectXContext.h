@@ -125,8 +125,4 @@ namespace Engine
 	};
 
 #define THROW_IF_FAILED(hr) DirectXContext::LogErrorIfFailed(hr, __FILE__, __LINE__);
-
-#ifndef ReleaseCom
-#define ReleaseCom(x) { if(x){ x->Release(); x = 0; } }
-#endif
 }
