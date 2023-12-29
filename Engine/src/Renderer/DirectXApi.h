@@ -20,8 +20,5 @@ namespace Engine
 
 	private:
 		static void InitializeDebug();
-		static void LogAdapters();
-		static void LogAdapterOutputs(IDXGIAdapter* pAdapter);
-		static void LogOutputDisplayModes(IDXGIOutput* pOutput, DXGI_FORMAT pFormat);
 	};
 }

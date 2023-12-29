@@ -33,4 +33,6 @@ private:
     std::unique_ptr<Engine::Object> m_BunnyObject;
     std::unique_ptr<Engine::Object> m_BunnyObject2;
     std::unique_ptr<Engine::Object> m_Ground;
+
+	float m_Timer;
 };

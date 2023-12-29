@@ -15,9 +15,6 @@ namespace Engine
 	{
 		InitializeDebug();
 		DirectXContext::Initialize();
-#ifdef _DEBUG
-        LogAdapters();
-#endif
 	}
 
 	void DirectXApi::Shutdown()
@@ -118,80 +115,5 @@ namespace Engine
         THROW_IF_FAILED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
         debugController->EnableDebugLayer();
 #endif
-	}
-
-	void DirectXApi::LogAdapters()
-	{
-		UINT i = 0;
-		IDXGIAdapter* adapter = nullptr;
-		std::vector<IDXGIAdapter*> adapterList;
-		while (DirectXContext::Get()->m_Factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
-		{
-			DXGI_ADAPTER_DESC desc;
-			adapter->GetDesc(&desc);
-
-			std::wstring text = L"***Adapter: ";
-			text += desc.Description;
-			text += L"\n";
-
-			OutputDebugString(text.c_str());
-
-			adapterList.push_back(adapter);
-
-			++i;
-		}
-
-		for (size_t i = 0; i < adapterList.size(); ++i)
-		{
-			LogAdapterOutputs(adapterList[i]);
-			ReleaseCom(adapterList[i]);
-		}
-	}
-
-	void DirectXApi::LogAdapterOutputs(IDXGIAdapter* pAdapter)
-	{
-		UINT i = 0;
-		IDXGIOutput* output = nullptr;
-		while (pAdapter->EnumOutputs(i, &output) != DXGI_ERROR_NOT_FOUND)
-		{
-			DXGI_OUTPUT_DESC desc;
-			output->GetDesc(&desc);
-
-			std::wstring text = L"***Output: ";
-			text += desc.DeviceName;
-			text += L"\n";
-			OutputDebugString(text.c_str());
-
-			LogOutputDisplayModes(output, DirectXSwapchain::k_BackBufferFormat);
-
-			ReleaseCom(output);
-
-			++i;
-		}
-	}
-
-	void DirectXApi::LogOutputDisplayModes(IDXGIOutput* pOutput, const DXGI_FORMAT pFormat)
-	{
-		UINT count = 0;
-		const UINT flags = 0;
-
-		// Call with nullptr to get list count.
-		pOutput->GetDisplayModeList(pFormat, flags, &count, nullptr);
-
-		std::vector<DXGI_MODE_DESC> modeList(count);
-		pOutput->GetDisplayModeList(pFormat, flags, &count, &modeList[0]);
-
-		for (auto& x : modeList)
-		{
-			UINT n = x.RefreshRate.Numerator;
-			UINT d = x.RefreshRate.Denominator;
-			std::wstring text =
-				L"Width = " + std::to_wstring(x.Width) + L" " +
-				L"Height = " + std::to_wstring(x.Height) + L" " +
-				L"Refresh = " + std::to_wstring(n) + L"/" + std::to_wstring(d) +
-				L"\n";
-
-			::OutputDebugString(text.c_str());
-		}
 	}
 }
